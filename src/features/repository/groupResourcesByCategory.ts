@@ -1,0 +1,84 @@
+import { repositorySections } from "../../config/repository";
+import type { Resource } from "../../contracts/resource";
+
+export type ResourceCategoryGroup = {
+  categoryId: string;
+  categoryTitle: string;
+  sectionId: Resource["sectionId"];
+  sectionTitle: string;
+  resources: Resource[];
+};
+
+type StructureSection = {
+  id: string;
+  title: string;
+  categories: readonly { id: string; title: string }[];
+};
+
+export function groupResourcesByCategory(
+  resources: Resource[],
+  sections: readonly StructureSection[] = repositorySections,
+): ResourceCategoryGroup[] {
+  const groups = new Map<string, ResourceCategoryGroup>();
+  const sectionById = new Map(sections.map((section) => [section.id, section]));
+  const categories = sections.flatMap((section) =>
+    section.categories.map((category) => ({
+      ...category,
+      sectionId: section.id,
+    })),
+  );
+  const categoryById = new Map(
+    categories.map((category) => [category.id, category]),
+  );
+
+  resources.forEach((resource) => {
+    const section = sectionById.get(resource.sectionId);
+    const category = resource.categoryId
+      ? categoryById.get(resource.categoryId)
+      : undefined;
+    const groupId = resource.categoryId ?? `${resource.sectionId}--section-files`;
+
+    const existing = groups.get(groupId);
+    if (existing) {
+      existing.resources.push(resource);
+      return;
+    }
+
+    groups.set(groupId, {
+      categoryId: groupId,
+      categoryTitle: category?.title ?? "Section files",
+      sectionId: resource.sectionId,
+      sectionTitle: section?.title ?? resource.sectionId,
+      resources: [resource],
+    });
+  });
+
+  const sectionOrder = new Map(
+    sections.map((section, index) => [section.id, index]),
+  );
+  const categoryOrder = new Map(
+    sections.flatMap((section) =>
+      section.categories.map(
+        (category, index) => [category.id, index] as const,
+      ),
+    ),
+  );
+
+  return [...groups.values()].sort((left, right) => {
+    const leftSectionId = left.sectionId;
+    const rightSectionId = right.sectionId;
+    const sectionDifference =
+      (leftSectionId
+        ? (sectionOrder.get(leftSectionId) ?? Number.MAX_SAFE_INTEGER)
+        : Number.MAX_SAFE_INTEGER) -
+      (rightSectionId
+        ? (sectionOrder.get(rightSectionId) ?? Number.MAX_SAFE_INTEGER)
+        : Number.MAX_SAFE_INTEGER);
+
+    if (sectionDifference !== 0) return sectionDifference;
+    return (
+      (categoryOrder.get(left.categoryId) ?? Number.MAX_SAFE_INTEGER) -
+      (categoryOrder.get(right.categoryId) ?? Number.MAX_SAFE_INTEGER)
+    );
+  });
+}
