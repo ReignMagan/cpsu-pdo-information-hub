@@ -24,7 +24,9 @@ type UploadDependencies = {
 function validateFilename(filename: string) {
   const extension = filename.split('.').pop()?.toLowerCase() as ResourceFileExtension | undefined
   const definition = extension ? resourceFileDefinitions[extension] : undefined
-  if (!extension || !definition) throw new InvalidResourceUploadError('The selected file type is unsupported.')
+  if (!extension || !definition || definition.fileType === 'xlsx') {
+    throw new InvalidResourceUploadError('Only PDF documents and images can be uploaded.')
+  }
   return { filename, definition }
 }
 

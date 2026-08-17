@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
+import type { ResourceUploadCompletionRequest } from '../../src/contracts/resourceUpload'
 import type { R2Config } from '../config/r2'
 import { ResourceUploadVerificationError, verifyResourceUpload } from './verifyResourceUpload'
 
 const config: R2Config = { accountId: 'account', accessKeyId: 'key', secretAccessKey: 'secret', bucketName: 'bucket', endpoint: 'https://account.r2.cloudflarestorage.com', publicBaseUrl: 'https://resources.example.edu' }
-const input = { key: 'statistical-profile/student-population/2026/student-population-2026-test.pdf', mimeType: 'application/pdf', fileSize: 2048 }
+const input: ResourceUploadCompletionRequest = { key: 'statistical-profile/student-population/2026/student-population-2026-test.pdf', mimeType: 'application/pdf', fileSize: 2048 }
 
 describe('verifyResourceUpload', () => {
   it('returns actual R2 object properties after verification', async () => {
@@ -14,6 +15,13 @@ describe('verifyResourceUpload', () => {
   })
   it('rejects a content-type mismatch', async () => {
     await expect(verifyResourceUpload(input, { config, headObject: async () => ({ ContentLength: 2048, ContentType: 'image/png', LastModified: new Date() }) })).rejects.toBeInstanceOf(ResourceUploadVerificationError)
+  })
+  it('rejects completion for an Excel repository key', async () => {
+    await expect(verifyResourceUpload({
+      ...input,
+      key: 'statistical-profile/student-population/2026/statistics.xlsx',
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' as ResourceUploadCompletionRequest['mimeType'],
+    }, { config })).rejects.toBeInstanceOf(ResourceUploadVerificationError)
   })
   it('verifies a school-year upload in an administrator-created section', async () => {
     const dynamicInput = { ...input, key: 'student-data/others/2026-2027/Sipalay - Research Plan.pdf' }

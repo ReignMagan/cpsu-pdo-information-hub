@@ -12,22 +12,22 @@ export function HomePage() {
         aria-labelledby="home-title"
       >
         <HomeHeroBackground />
-        <div className="relative z-10 mx-auto flex min-h-[31rem] max-w-content items-center px-5 py-14 text-left sm:min-h-[34rem] sm:px-8 sm:py-16 lg:min-h-[38rem] lg:px-10">
+        <div className="relative z-10 mx-auto flex min-h-[29rem] max-w-content items-center px-5 py-10 text-left sm:min-h-[34rem] sm:px-8 sm:py-16 lg:min-h-[38rem] lg:px-10">
           <div className="max-w-[43rem]">
             <h1
               id="home-title"
-              className="break-words font-serif text-[2.65rem] leading-[1.02] tracking-[-0.04em] text-foreground sm:text-6xl sm:leading-[0.98] lg:text-[4.75rem]"
+              className="max-w-[21rem] break-words font-serif text-[2.35rem] leading-[1.04] tracking-[-0.04em] text-foreground min-[23rem]:text-[2.5rem] sm:max-w-none sm:text-6xl sm:leading-[0.98] lg:text-[4.75rem]"
             >
               Planning and Development Office Information Hub
             </h1>
-            <p className="mt-7 max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">
+            <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:mt-7 sm:text-lg sm:leading-8">
               A central access point for institutional reports, statistical
               profiles, planning documents, and performance records.
             </p>
-            <div className="mt-9 flex flex-col items-start justify-start gap-5 sm:flex-row sm:items-center">
+            <div className="mt-7 flex flex-col items-start justify-start gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-5">
               <Link
                 to="/repository"
-                className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-primary"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-[0_10px_24px_rgba(20,83,45,0.18)] transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-primary min-[23rem]:w-auto"
               >
                 Browse Repository
                 <ArrowRight className="size-4" aria-hidden="true" />
@@ -45,7 +45,7 @@ export function HomePage() {
       </section>
 
       <section className="bg-surface" aria-labelledby="section-directory-title">
-        <div className="mx-auto max-w-content px-5 py-10 sm:px-8 sm:py-12 lg:px-10">
+        <div className="mx-auto max-w-content px-5 py-8 sm:px-8 sm:py-12 lg:px-10">
           <div className="flex items-end gap-6 border-b border-strong-border pb-5">
             <h2
               id="section-directory-title"
@@ -92,12 +92,12 @@ export function HomePage() {
             </p>
           ) : null}
           {structure.isSuccess && structure.data.length > 0 ? (
-            <div className="grid md:grid-cols-2">
+            <div className="mt-6 grid gap-3 md:grid-cols-2">
               {structure.data.map((section) => (
                 <Link
                   key={section.id}
                   to={`/repository?section=${encodeURIComponent(section.id)}`}
-                  className="group grid grid-cols-[1fr_auto] gap-4 border-b border-border px-0 py-7 transition-colors hover:bg-primary-soft focus-visible:bg-primary-soft focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-primary md:px-5 md:odd:border-r"
+                  className="group grid grid-cols-[1fr_auto] gap-4 rounded-2xl border border-border bg-surface-secondary/60 px-5 py-6 shadow-[0_8px_24px_rgba(20,83,45,0.04)] transition-colors hover:border-primary/25 hover:bg-primary-soft focus-visible:bg-primary-soft focus-visible:outline-2 focus-visible:outline-primary"
                 >
                   <span>
                     <span className="block text-base font-semibold text-foreground group-hover:text-primary">

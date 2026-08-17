@@ -53,7 +53,7 @@ describe("groupResourcesByCategory", () => {
     expect(groups[0].resources).toHaveLength(2);
   });
 
-  it("groups files without a category under Section files", () => {
+  it("groups files without a category directly under their section", () => {
     const groups = groupResourcesByCategory([
       resource({
         key: "statistical-profile/2025-2026/Office Report.pdf",
@@ -62,6 +62,37 @@ describe("groupResourcesByCategory", () => {
         year: "2025-2026",
       }),
     ]);
-    expect(groups[0]).toMatchObject({ categoryTitle: "Section files", sectionTitle: "Statistical Profile" });
+    expect(groups[0]).toMatchObject({
+      categoryTitle: "Statistical Profile",
+      isSectionRoot: true,
+      sectionTitle: "Statistical Profile",
+    });
+  });
+
+  it("places uncategorized files first, followed by configured category order", () => {
+    const groups = groupResourcesByCategory([
+      resource({
+        key: "statistical-profile/human-resources/2026/personnel.pdf",
+        filename: "personnel.pdf",
+        categoryId: "human-resources",
+      }),
+      resource({
+        key: "statistical-profile/2026/section-report.pdf",
+        filename: "section-report.pdf",
+        categoryId: undefined,
+      }),
+      resource(),
+    ]);
+
+    expect(
+      groups.map(({ categoryTitle, isSectionRoot }) => ({
+        categoryTitle,
+        isSectionRoot,
+      })),
+    ).toEqual([
+      { categoryTitle: "Statistical Profile", isSectionRoot: true },
+      { categoryTitle: "Student Population", isSectionRoot: false },
+      { categoryTitle: "Human Resources", isSectionRoot: false },
+    ]);
   });
 });

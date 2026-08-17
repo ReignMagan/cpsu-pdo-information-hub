@@ -1059,8 +1059,8 @@ Examples:
 
 ```text
 PDF
-XLSX
 IMG
+File
 ```
 
 These can appear inside narrow outlined rectangles.
@@ -1482,7 +1482,7 @@ Example:
 ┌─────────────────────────────────────────────┐
 │ Upload institutional resource              │
 │                                             │
-│ Drop a PDF, XLSX, or image here            │
+│ Drop a PDF or image here                  │
 │ or choose a file                           │
 │                                             │
 │ Maximum file size: 25 MB                   │
@@ -1634,7 +1634,6 @@ TOTAL RESOURCES
 248
 
 PDF       126
-Excel      78
 Images     44
 ```
 
@@ -1785,25 +1784,11 @@ The image itself should remain the focus.
 
 ---
 
-# 75. Excel Resource View
+# 75. Legacy File Handling
 
-Excel files do not require fake previews.
-
-Display:
-
-```text
-Excel icon
-Filename
-Description
-Year
-Category
-Size
-Upload date
-
-[ Download Spreadsheet ]
-```
-
-Do not render fake spreadsheet screenshots.
+Legacy non-previewable files should use the standard resource row with a
+generic file label and download action. Do not add a dedicated icon, metric,
+filter, preview prompt, or simulated file preview for a legacy format.
 
 ---
 

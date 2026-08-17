@@ -7,12 +7,29 @@ import {
 
 export const maximumResourceFileSize = 25 * 1024 * 1024;
 
+export const resourceUploadFileExtensions = [
+  "pdf",
+  "jpg",
+  "jpeg",
+  "png",
+  "webp",
+] as const;
+
+export const resourceUploadMimeTypes = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+] as const;
+
+export const resourceUploadMimeTypeSchema = z.enum(resourceUploadMimeTypes);
+
 export const resourceUploadRequestSchema = z.object({
   filename: resourceFilenameSchema,
   sectionId: repositorySectionIdSchema,
   categoryId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u).optional(),
   year: resourceYearSchema,
-  mimeType: z.string().trim().min(1).max(120),
+  mimeType: resourceUploadMimeTypeSchema,
   fileSize: z.number().int().positive().max(maximumResourceFileSize),
 });
 
@@ -35,7 +52,7 @@ export type ResourceUploadAuthorization = z.infer<
 
 export const resourceUploadCompletionRequestSchema = z.object({
   key: z.string().min(1).max(1024),
-  mimeType: z.string().trim().min(1).max(120),
+  mimeType: resourceUploadMimeTypeSchema,
   fileSize: z.number().int().positive().max(maximumResourceFileSize),
 });
 

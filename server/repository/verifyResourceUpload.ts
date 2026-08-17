@@ -21,6 +21,9 @@ export class ResourceUploadVerificationError extends Error {}
 export async function verifyResourceUpload(input: ResourceUploadCompletionRequest, dependencies: VerificationDependencies = {}) {
   const structure = dependencies.structure ?? (dependencies.environment ? await readRepositoryStructure(dependencies.environment) : repositorySections)
   const parsedKey = parseResourceObjectKey(input.key, structure)
+  if (parsedKey.fileType === 'xlsx') {
+    throw new ResourceUploadVerificationError('Only PDF documents and images can be uploaded.')
+  }
   if (parsedKey.mimeType !== input.mimeType) throw new ResourceUploadVerificationError('The uploaded content type does not match the repository key.')
   const config = dependencies.config ?? getR2Config(dependencies.environment)
   const client = createR2Client(config)

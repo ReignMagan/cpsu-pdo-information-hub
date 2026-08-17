@@ -16,8 +16,8 @@
   --color-danger-soft: var(--danger-soft);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --spacing-content: 88rem;
   --spacing-readable: 72rem;
 }
@@ -28,21 +28,27 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --background: #f7f8f6;
+  --background: #f5f8f5;
   --surface: #ffffff;
-  --surface-secondary: #f3f5f2;
+  --surface-secondary: #f1f6f2;
   --foreground: #17201a;
   --muted-foreground: #4b574f;
   --primary: #14532d;
   --primary-hover: #166534;
-  --primary-soft: #f0fdf4;
+  --primary-soft: #edf8f0;
   --primary-foreground: #ffffff;
-  --border: #dde2dc;
-  --strong-border: #c9d1ca;
+  --border: #e1e8e2;
+  --strong-border: #cfdacf;
   --danger: #9f2d2d;
   --danger-soft: #fff6f5;
   --warning: #9a6700;
   --warning-soft: #fff9e8;
+  --radius-sm: 0.625rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.125rem;
+  --radius-xl: 1.5rem;
+  --shadow-soft: 0 10px 28px rgba(20, 83, 45, 0.07);
+  --shadow-float: 0 22px 60px rgba(20, 83, 45, 0.14);
   background: var(--background);
   color: var(--foreground);
 }
@@ -60,6 +66,77 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+input,
+select,
+textarea,
+a.bg-primary {
+  border-radius: var(--radius-md);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+button:not(:disabled):active,
+a.bg-primary:active {
+  transform: translateY(1px);
+}
+
+input,
+select,
+textarea {
+  box-shadow: 0 1px 2px rgba(20, 83, 45, 0.03);
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--strong-border);
+}
+
+dialog,
+:where(.border, .border-y).bg-surface,
+:where(.border, .border-y).bg-surface-secondary {
+  border-radius: var(--radius-lg);
+}
+
+:where(.border, .border-y).bg-surface,
+:where(.border, .border-y).bg-surface-secondary {
+  box-shadow: var(--shadow-soft);
+}
+
+::selection {
+  background: #ccebd5;
+  color: var(--foreground);
+}
+
+@media (max-width: 639px) {
+  select,
+  input,
+  textarea {
+    font-size: 1rem;
+  }
 }
 
 @keyframes hero-folder-idle {
@@ -268,6 +345,8 @@ a {
   color: var(--primary);
   padding: 0.75rem 1rem;
   font-weight: 700;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-float);
 }
 
 .skip-link:focus {

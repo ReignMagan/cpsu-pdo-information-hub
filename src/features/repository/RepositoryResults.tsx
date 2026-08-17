@@ -13,7 +13,6 @@ export function RepositoryResults() {
   const [filters, setFilters] = useState<RepositoryFilters>(() => ({
     fileType:
       searchParams.get("fileType") === "pdf" ||
-      searchParams.get("fileType") === "xlsx" ||
       searchParams.get("fileType") === "image"
         ? (searchParams.get("fileType") as RepositoryFilters["fileType"])
         : "",
@@ -61,6 +60,7 @@ export function RepositoryResults() {
       }),
     [groups, structureQuery.data],
   );
+  const categoryCount = groups.filter((group) => !group.isSectionRoot).length;
   function updateFilters(next: RepositoryFilters) {
     setFilters(next);
     const params = new URLSearchParams();
@@ -76,7 +76,7 @@ export function RepositoryResults() {
       <RepositoryToolbar {...filters} onChange={updateFilters} />
 
       {resourcesQuery.isPending ? (
-        <div className="mt-5 border-y border-border bg-surface px-6 py-10 text-center">
+        <div className="mt-5 rounded-2xl border border-border bg-surface px-6 py-10 text-center shadow-[0_10px_28px_rgba(20,83,45,0.05)]">
           <RefreshCw
             className="mx-auto size-7 animate-spin text-primary motion-reduce:animate-none"
             aria-hidden="true"
@@ -87,7 +87,7 @@ export function RepositoryResults() {
 
       {resourcesQuery.isError ? (
         <div
-          className="mt-5 border-y border-border bg-surface px-6 py-9 text-center sm:px-8"
+          className="mt-5 rounded-2xl border border-border bg-surface px-6 py-9 text-center shadow-[0_10px_28px_rgba(20,83,45,0.05)] sm:px-8"
           role="alert"
         >
           <h2 className="font-serif text-2xl">Repository unavailable</h2>
@@ -107,7 +107,7 @@ export function RepositoryResults() {
       ) : null}
 
       {resourcesQuery.isSuccess && groups.length === 0 ? (
-        <div className="mt-5 border-y border-border bg-surface px-6 py-9 text-center sm:px-8">
+        <div className="mt-5 rounded-2xl border border-border bg-surface px-6 py-9 text-center shadow-[0_10px_28px_rgba(20,83,45,0.05)] sm:px-8">
           <FileSearch
             className="mx-auto size-8 text-primary"
             strokeWidth={1.5}
@@ -138,8 +138,8 @@ export function RepositoryResults() {
             <p className="text-sm text-muted-foreground">
               {resourcesQuery.data.meta.total}{" "}
               {resourcesQuery.data.meta.total === 1 ? "resource" : "resources"}{" "}
-              · {groups.length}{" "}
-              {groups.length === 1 ? "category" : "categories"}
+              · {categoryCount}{" "}
+              {categoryCount === 1 ? "category" : "categories"}
             </p>
           </div>
           <div className="mt-5 space-y-8">

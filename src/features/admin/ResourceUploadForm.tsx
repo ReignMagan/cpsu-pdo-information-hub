@@ -4,19 +4,16 @@ import { CheckCircle2, Upload } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
-import { maximumResourceFileSize } from "../../contracts/resourceUpload";
+import {
+  maximumResourceFileSize,
+  resourceUploadFileExtensions,
+  resourceUploadMimeTypes,
+} from "../../contracts/resourceUpload";
 import { schoolYearSchema } from "../../contracts/resource";
 import { uploadResource } from "../../services/resourceUpload";
 import { useAuth } from "../auth/useAuth";
 import { useRepositoryStructureQuery } from "../repository/useRepositoryStructureQuery";
 
-const acceptedTypes = [
-  "application/pdf",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-];
 const formSchema = z.object({
   sectionId: z.string().min(1, "Select a repository section."),
   categoryId: z.string().optional(),
@@ -28,8 +25,8 @@ const formSchema = z.object({
       "The file must not exceed 25 MB.",
     )
     .refine(
-      (file) => acceptedTypes.includes(file.type),
-      "Select a PDF document, Excel workbook, or image.",
+      (file) => resourceUploadMimeTypes.some((type) => type === file.type),
+      "Select a PDF document or image.",
     ),
 });
 type FormInput = z.input<typeof formSchema>;
@@ -82,7 +79,7 @@ export function ResourceUploadForm() {
   });
   return (
     <form
-      className="mt-6 w-full space-y-6 border-y border-strong-border bg-surface px-5 py-6 sm:px-7"
+      className="mt-6 w-full space-y-6 rounded-2xl border border-border bg-surface px-4 py-5 shadow-[0_12px_32px_rgba(20,83,45,0.06)] sm:px-7 sm:py-6"
       onSubmit={handleSubmit((values) => {
         setUploadedFilename(null);
         mutation.mutate(values);
@@ -147,37 +144,60 @@ export function ResourceUploadForm() {
           </span>
         ) : null}
       </label>
-      <label className="block">
-        <span className="block text-sm font-semibold">File</span>
+      <div className="block">
+        <span id="resource-file-label" className="block text-sm font-semibold">
+          File
+        </span>
         <Controller
           name="file"
           control={control}
-          render={({ field: { name, onBlur, onChange, ref } }) => (
-            <input
-              ref={ref}
-              name={name}
-              onBlur={onBlur}
-              onChange={(event) =>
-                onChange(event.target.files?.item(0) ?? undefined)
-              }
-              type="file"
-              accept=".pdf,.xlsx,.jpg,.jpeg,.png,.webp"
-              className="mt-2 block w-full cursor-pointer border border-dashed border-strong-border bg-surface-secondary px-4 py-5 text-sm file:mr-4 file:cursor-pointer file:border-0 file:bg-primary file:px-4 file:py-2 file:font-semibold file:text-primary-foreground"
-            />
+          render={({ field: { name, onBlur, onChange, ref, value } }) => (
+            <div className="mt-2 flex min-h-20 flex-col gap-3 rounded-2xl border border-dashed border-strong-border bg-surface-secondary p-4 sm:flex-row sm:items-center">
+              <input
+                id="resource-file"
+                ref={ref}
+                name={name}
+                onBlur={onBlur}
+                onChange={(event) =>
+                  onChange(event.target.files?.item(0) ?? undefined)
+                }
+                type="file"
+                accept={resourceUploadFileExtensions
+                  .map((extension) => `.${extension}`)
+                  .join(",")}
+                aria-describedby="resource-file-help"
+                aria-labelledby="resource-file-label"
+                aria-invalid={errors.file ? "true" : "false"}
+                className="peer sr-only"
+              />
+              <label
+                htmlFor="resource-file"
+                className="inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-[0_8px_20px_rgba(20,83,45,0.12)] transition-colors hover:bg-primary-hover peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary sm:w-auto"
+              >
+                <Upload className="size-4" aria-hidden="true" />
+                Choose file
+              </label>
+              <span className="min-w-0 flex-1 break-all text-sm text-foreground">
+                {value instanceof File ? value.name : "No file chosen"}
+              </span>
+            </div>
           )}
         />
-        <span className="mt-2 block text-sm text-muted-foreground">
-          PDF documents, Excel workbooks, and common images are accepted. Maximum 25 MB.
+        <span
+          id="resource-file-help"
+          className="mt-2 block text-sm text-muted-foreground"
+        >
+          PDF documents and JPG, PNG, or WebP images are accepted. Maximum 25 MB.
         </span>
         {errors.file ? (
           <span className="mt-2 block text-sm text-danger">
             {errors.file.message}
           </span>
         ) : null}
-      </label>
+      </div>
       {mutation.isError ? (
         <p
-          className="border-l-2 border-danger bg-danger-soft px-4 py-3 text-sm text-danger"
+          className="rounded-xl border border-danger/20 bg-danger-soft px-4 py-3 text-sm text-danger"
           role="alert"
         >
           {mutation.error instanceof Error
@@ -187,7 +207,7 @@ export function ResourceUploadForm() {
       ) : null}
       {uploadedFilename ? (
         <p
-          className="flex items-start gap-2 border-l-2 border-primary bg-primary-soft px-4 py-3 text-sm text-primary"
+          className="flex items-start gap-2 rounded-xl border border-primary/15 bg-primary-soft px-4 py-3 text-sm text-primary"
           role="status"
         >
           <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
@@ -200,7 +220,7 @@ export function ResourceUploadForm() {
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="inline-flex min-h-12 cursor-pointer items-center gap-2 bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-55"
+        className="inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-55 min-[24rem]:w-auto"
       >
         <Upload className="size-4" aria-hidden="true" />
         {mutation.isPending ? "Uploading…" : "Upload resource"}

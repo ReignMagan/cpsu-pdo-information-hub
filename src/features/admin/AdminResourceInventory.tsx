@@ -14,6 +14,7 @@ import {
   repositorySections,
 } from "../../config/repository";
 import type {
+  Resource,
   ResourceFileType,
   ResourceQuery,
   ResourceSort,
@@ -22,6 +23,7 @@ import { useAdminResourcesQuery } from "./useAdminResourcesQuery";
 import { deleteResource, renameResource } from "../../services/adminOperations";
 import { useAuth } from "../auth/useAuth";
 import { AppDialog } from "../../components/ui/AppDialog";
+import { formatResourceFileType } from "../../utils/formatResourceFileType";
 
 const fileTypeOptions: readonly {
   value: ResourceFileType | "";
@@ -29,7 +31,6 @@ const fileTypeOptions: readonly {
 }[] = [
   { value: "", label: "All file types" },
   { value: "pdf", label: "PDF documents" },
-  { value: "xlsx", label: "Excel workbooks" },
   { value: "image", label: "Images" },
 ];
 
@@ -56,6 +57,39 @@ function formatDate(value: string) {
 }
 
 type PageState = { cursor?: string; history: (string | undefined)[] };
+
+type ResourceActionsProps = {
+  resource: Resource;
+  onDelete: (resource: Resource) => void;
+  onRename: (resource: Resource) => void;
+};
+
+function ResourceActions({
+  resource,
+  onDelete,
+  onRename,
+}: ResourceActionsProps) {
+  return (
+    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-nowrap sm:gap-4">
+      <button
+        type="button"
+        onClick={() => onRename(resource)}
+        className="inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center whitespace-nowrap border border-primary px-3 text-sm font-semibold text-primary sm:min-h-0 sm:border-0 sm:p-0"
+      >
+        <Pencil className="mr-1.5 size-4" aria-hidden="true" />
+        Rename
+      </button>
+      <button
+        type="button"
+        onClick={() => onDelete(resource)}
+        className="inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center whitespace-nowrap border border-danger/35 px-3 text-sm font-semibold text-danger sm:min-h-0 sm:border-0 sm:p-0"
+      >
+        <Trash2 className="mr-1.5 size-4" aria-hidden="true" />
+        Delete
+      </button>
+    </div>
+  );
+}
 
 export function AdminResourceInventory() {
   const { user } = useAuth();
@@ -123,10 +157,22 @@ export function AdminResourceInventory() {
     setPage({ history: [] });
   }
 
+  function openRename(resource: Resource) {
+    setRenameTarget({
+      key: resource.key,
+      original: resource.filename,
+      value: resource.filename,
+    });
+  }
+
+  function openDelete(resource: Resource) {
+    setDeleteTarget({ key: resource.key, filename: resource.filename });
+  }
+
   return (
     <div className="mt-6">
-      <div className="grid gap-4 border-y border-strong-border bg-surface-secondary px-5 py-5 md:grid-cols-2 xl:grid-cols-[minmax(16rem,1.5fr)_repeat(3,minmax(10rem,0.7fr))]">
-        <label className="relative block">
+      <div className="grid grid-cols-2 gap-4 rounded-2xl border border-border bg-surface-secondary px-4 py-5 shadow-[0_10px_28px_rgba(20,83,45,0.05)] md:grid-cols-2 md:px-5 xl:grid-cols-[minmax(16rem,1.5fr)_repeat(3,minmax(10rem,0.7fr))]">
+        <label className="relative col-span-2 block xl:col-span-1">
           <span className="block text-xs font-bold tracking-[0.1em] text-muted-foreground">
             SEARCH
           </span>
@@ -145,7 +191,7 @@ export function AdminResourceInventory() {
             className="mt-2 min-h-11 w-full border border-strong-border bg-surface pl-10 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </label>
-        <label>
+        <label className="col-span-2 md:col-span-1">
           <span className="block text-xs font-bold tracking-[0.1em] text-muted-foreground">
             SECTION
           </span>
@@ -267,17 +313,86 @@ export function AdminResourceInventory() {
             <p>{resourcesQuery.data.meta.total} matching resources</p>
             <p>Showing up to 25 per page</p>
           </div>
-          <div className="overflow-x-auto border-b border-strong-border bg-surface">
-            <table className="w-full min-w-[64rem] border-collapse text-left">
+          <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.05)] md:hidden">
+            {resourcesQuery.data.data.map((resource) => (
+              <li key={resource.key} className="p-4">
+                <a
+                  href={resource.downloadUrl}
+                  className="break-words text-sm font-semibold leading-6 text-primary underline decoration-primary/30 underline-offset-4 [overflow-wrap:anywhere]"
+                >
+                  {resource.filename}
+                </a>
+                <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                  <div className="col-span-2">
+                    <dt className="text-xs font-bold tracking-wide text-muted-foreground">
+                      LOCATION
+                    </dt>
+                    <dd className="mt-1">
+                      {repositorySections.find(
+                        (item) => item.id === resource.sectionId,
+                      )?.title ?? resource.sectionId}
+                      <span className="block text-xs text-muted-foreground">
+                        {resource.categoryId
+                          ? repositoryCategoryById.get(resource.categoryId)
+                              ?.title ?? resource.categoryId
+                          : "No category"}
+                      </span>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs font-bold tracking-wide text-muted-foreground">
+                      SCHOOL YEAR
+                    </dt>
+                    <dd className="mt-1">{resource.year}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs font-bold tracking-wide text-muted-foreground">
+                      FILE
+                    </dt>
+                    <dd className="mt-1">
+                      {formatResourceFileType(resource.fileType)}
+                      <span className="block text-xs text-muted-foreground">
+                        {formatFileSize(resource.fileSize)}
+                      </span>
+                    </dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="text-xs font-bold tracking-wide text-muted-foreground">
+                      UPDATED
+                    </dt>
+                    <dd className="mt-1">{formatDate(resource.uploadedAt)}</dd>
+                  </div>
+                </dl>
+                <div className="mt-4 border-t border-border pt-4">
+                  <ResourceActions
+                    resource={resource}
+                    onRename={openRename}
+                    onDelete={openDelete}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-2xl border border-border bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.05)] md:block">
+            <table className="w-full min-w-[72rem] border-collapse text-left">
+              <colgroup>
+                <col />
+                <col />
+                <col className="w-32" />
+                <col className="w-24" />
+                <col className="w-28" />
+                <col className="w-40" />
+                <col className="w-48" />
+              </colgroup>
               <thead>
                 <tr className="border-b border-strong-border text-xs font-bold tracking-[0.1em] text-muted-foreground">
                   <th className="px-5 py-4">FILE NAME</th>
                   <th className="px-5 py-4">LOCATION</th>
-                  <th className="px-5 py-4">YEAR</th>
-                  <th className="px-5 py-4">TYPE</th>
-                  <th className="px-5 py-4">SIZE</th>
-                  <th className="px-5 py-4">UPDATED</th>
-                  <th className="px-5 py-4">ACTIONS</th>
+                  <th className="whitespace-nowrap px-5 py-4">YEAR</th>
+                  <th className="whitespace-nowrap px-5 py-4">TYPE</th>
+                  <th className="whitespace-nowrap px-5 py-4">SIZE</th>
+                  <th className="whitespace-nowrap px-5 py-4">UPDATED</th>
+                  <th className="whitespace-nowrap px-5 py-4">ACTIONS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -306,44 +421,24 @@ export function AdminResourceInventory() {
                           : "No category"}
                       </p>
                     </td>
-                    <td className="px-5 py-5 text-sm">{resource.year}</td>
-                    <td className="px-5 py-5 text-sm uppercase">
-                      {resource.fileType === "xlsx" ? "Excel" : resource.fileType === "pdf" ? "PDF" : "Image"}
+                    <td className="whitespace-nowrap px-5 py-5 text-sm">
+                      {resource.year}
                     </td>
-                    <td className="px-5 py-5 text-sm">
+                    <td className="whitespace-nowrap px-5 py-5 text-sm uppercase">
+                      {formatResourceFileType(resource.fileType)}
+                    </td>
+                    <td className="whitespace-nowrap px-5 py-5 text-sm">
                       {formatFileSize(resource.fileSize)}
                     </td>
-                    <td className="px-5 py-5 text-sm">
+                    <td className="whitespace-nowrap px-5 py-5 text-sm">
                       {formatDate(resource.uploadedAt)}
                     </td>
-                    <td className="px-5 py-5">
-                      <div className="flex gap-4">
-                        <button
-                          onClick={() =>
-                            setRenameTarget({
-                              key: resource.key,
-                              original: resource.filename,
-                              value: resource.filename,
-                            })
-                          }
-                          className="cursor-pointer text-sm font-semibold text-primary"
-                        >
-                          <Pencil className="mr-1 inline size-4" />
-                          Rename
-                        </button>
-                        <button
-                          onClick={() =>
-                            setDeleteTarget({
-                              key: resource.key,
-                              filename: resource.filename,
-                            })
-                          }
-                          className="cursor-pointer text-sm font-semibold text-danger"
-                        >
-                          <Trash2 className="mr-1 inline size-4" />
-                          Delete
-                        </button>
-                      </div>
+                    <td className="whitespace-nowrap px-5 py-5">
+                      <ResourceActions
+                        resource={resource}
+                        onRename={openRename}
+                        onDelete={openDelete}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -352,7 +447,7 @@ export function AdminResourceInventory() {
           </div>
           <nav
             aria-label="Resource inventory pages"
-            className="flex items-center justify-between gap-4 pt-6"
+            className="grid grid-cols-2 gap-3 pt-6 sm:flex sm:items-center sm:justify-between sm:gap-4"
           >
             <button
               type="button"
@@ -363,7 +458,7 @@ export function AdminResourceInventory() {
                   history: current.history.slice(0, -1),
                 }))
               }
-              className="inline-flex min-h-11 cursor-pointer items-center gap-2 border border-strong-border px-4 text-sm font-semibold text-primary hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-45"
+              className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 border border-strong-border px-3 text-sm font-semibold text-primary hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-45 sm:px-4"
             >
               <ChevronLeft className="size-4" aria-hidden="true" />
               Previous
@@ -377,7 +472,7 @@ export function AdminResourceInventory() {
                   history: [...current.history, current.cursor],
                 }))
               }
-              className="inline-flex min-h-11 cursor-pointer items-center gap-2 border border-primary px-4 text-sm font-semibold text-primary hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-45"
+              className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 border border-primary px-3 text-sm font-semibold text-primary hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-45 sm:px-4"
             >
               Next
               <ChevronRight className="size-4" aria-hidden="true" />
@@ -424,7 +519,7 @@ export function AdminResourceInventory() {
                   : "The resource could not be renamed."}
               </p>
             ) : null}
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 grid gap-3 min-[24rem]:flex min-[24rem]:justify-end">
               <button
                 type="button"
                 onClick={() => setRenameTarget(null)}
@@ -466,7 +561,7 @@ export function AdminResourceInventory() {
                   : "The resource could not be deleted."}
               </p>
             ) : null}
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 grid gap-3 min-[24rem]:flex min-[24rem]:justify-end">
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}

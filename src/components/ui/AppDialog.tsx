@@ -33,13 +33,13 @@ export function AppDialog({
       onClick={(event) => {
         if (event.target === ref.current) onClose();
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-lg border border-strong-border bg-surface p-0 text-foreground shadow-2xl backdrop:bg-black/45"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-3xl border border-primary/20 bg-surface p-0 text-foreground shadow-[0_28px_90px_rgba(20,83,45,0.24)] backdrop:bg-primary/25"
     >
-      <div className="flex items-start justify-between gap-5 border-b border-border px-5 py-4 sm:px-6">
+      <div className="sticky top-0 z-10 flex items-start justify-between gap-4 bg-primary px-4 py-5 text-primary-foreground sm:px-6">
         <div>
           <h2 className="font-serif text-2xl tracking-tight">{title}</h2>
           {description ? (
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            <p className="mt-2 text-sm leading-6 text-primary-foreground/75">
               {description}
             </p>
           ) : null}
@@ -48,7 +48,7 @@ export function AppDialog({
           type="button"
           onClick={onClose}
           aria-label="Close dialog"
-          className="-mr-2 inline-flex size-10 shrink-0 cursor-pointer items-center justify-center text-muted-foreground hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-primary"
+          className="-mr-2 inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-xl text-primary-foreground/80 hover:bg-white/15 hover:text-primary-foreground focus-visible:outline-2 focus-visible:outline-primary-foreground"
         >
           <X className="size-5" />
         </button>

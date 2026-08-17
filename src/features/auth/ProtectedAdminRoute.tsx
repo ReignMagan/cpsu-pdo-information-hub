@@ -22,7 +22,7 @@ export function ProtectedAdminRoute() {
   if (administrator.isError)
     return (
       <main className="grid min-h-screen place-items-center bg-background px-5 text-foreground">
-        <section className="w-full max-w-lg border border-strong-border bg-surface p-7">
+        <section className="w-full max-w-lg rounded-2xl border border-border bg-surface p-7 shadow-[0_18px_50px_rgba(20,83,45,0.1)]">
           <h1 className="font-serif text-3xl">Administrator access required</h1>
           <p className="mt-4 leading-7 text-muted-foreground">
             This account has not been approved to manage the repository. Contact

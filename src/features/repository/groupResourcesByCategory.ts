@@ -4,6 +4,7 @@ import type { Resource } from "../../contracts/resource";
 export type ResourceCategoryGroup = {
   categoryId: string;
   categoryTitle: string;
+  isSectionRoot: boolean;
   sectionId: Resource["sectionId"];
   sectionTitle: string;
   resources: Resource[];
@@ -46,7 +47,8 @@ export function groupResourcesByCategory(
 
     groups.set(groupId, {
       categoryId: groupId,
-      categoryTitle: category?.title ?? "Section files",
+      categoryTitle: category?.title ?? section?.title ?? resource.sectionId,
+      isSectionRoot: !resource.categoryId,
       sectionId: resource.sectionId,
       sectionTitle: section?.title ?? resource.sectionId,
       resources: [resource],
@@ -59,7 +61,7 @@ export function groupResourcesByCategory(
   const categoryOrder = new Map(
     sections.flatMap((section) =>
       section.categories.map(
-        (category, index) => [category.id, index] as const,
+        (category, index) => [`${section.id}/${category.id}`, index] as const,
       ),
     ),
   );
@@ -76,9 +78,16 @@ export function groupResourcesByCategory(
         : Number.MAX_SAFE_INTEGER);
 
     if (sectionDifference !== 0) return sectionDifference;
+
+    if (left.isSectionRoot !== right.isSectionRoot) {
+      return left.isSectionRoot ? -1 : 1;
+    }
+
     return (
-      (categoryOrder.get(left.categoryId) ?? Number.MAX_SAFE_INTEGER) -
-      (categoryOrder.get(right.categoryId) ?? Number.MAX_SAFE_INTEGER)
+      (categoryOrder.get(`${left.sectionId}/${left.categoryId}`) ??
+        Number.MAX_SAFE_INTEGER) -
+      (categoryOrder.get(`${right.sectionId}/${right.categoryId}`) ??
+        Number.MAX_SAFE_INTEGER)
     );
   });
 }

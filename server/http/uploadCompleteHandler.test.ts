@@ -20,4 +20,8 @@ describe('handleUploadCompleteRequest', () => {
     const response = await handleUploadCompleteRequest(new Request('http://localhost/api/admin/resources/upload-complete', { method: 'POST', headers: { authorization: 'Bearer valid' }, body: JSON.stringify(body) }), { verifyIdToken: async () => identity, verification: { config, headObject: async () => ({ ContentLength: 999, ContentType: 'application/pdf', LastModified: new Date() }) }, audit: async () => '_system/audit/test.json' })
     expect(response.status).toBe(422)
   })
+  it('rejects Excel upload completion metadata', async () => {
+    const response = await handleUploadCompleteRequest(new Request('http://localhost/api/admin/resources/upload-complete', { method: 'POST', headers: { authorization: 'Bearer valid' }, body: JSON.stringify({ ...body, key: 'statistical-profile/student-population/2026/statistics.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }) }), { verifyIdToken: async () => identity })
+    expect(response.status).toBe(400)
+  })
 })

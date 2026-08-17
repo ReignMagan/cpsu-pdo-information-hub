@@ -51,7 +51,7 @@ export function AdminLoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-5 py-5 text-foreground sm:px-8 sm:py-7">
+    <main className="min-h-screen bg-background px-4 py-4 text-foreground sm:px-8 sm:py-7">
       <div className="mx-auto max-w-6xl">
         <Link
           to="/"
@@ -60,40 +60,40 @@ export function AdminLoginPage() {
           <ArrowLeft className="size-4" aria-hidden="true" />
           Return to public site
         </Link>
-        <div className="mt-6 grid overflow-hidden border border-strong-border bg-surface lg:grid-cols-[0.82fr_1.18fr]">
+        <div className="mt-5 grid overflow-hidden rounded-3xl border border-border bg-surface shadow-[0_24px_70px_rgba(20,83,45,0.12)] sm:mt-6 lg:grid-cols-[0.82fr_1.18fr]">
           <section
-            className="border-b border-border bg-primary px-7 py-8 text-primary-foreground sm:px-9 lg:border-b-0 lg:border-r lg:py-10"
+            className="border-b border-border bg-primary px-5 py-6 text-primary-foreground sm:px-9 sm:py-8 lg:border-b-0 lg:border-r lg:py-10"
             aria-labelledby="login-context-title"
           >
             <img
               src={cpsuLogo}
               alt=""
-              className="size-16 object-contain"
+              className="size-12 object-contain sm:size-16"
               width="500"
               height="500"
             />
-            <p className="mt-8 text-xs font-bold tracking-[0.15em] text-primary-foreground/75">
+            <p className="mt-5 text-[0.68rem] font-bold tracking-[0.12em] text-primary-foreground/75 sm:mt-8 sm:text-xs sm:tracking-[0.15em]">
               CENTRAL PHILIPPINES STATE UNIVERSITY
             </p>
             <h1
               id="login-context-title"
-              className="mt-4 font-serif text-4xl leading-tight sm:text-5xl"
+              className="mt-3 font-serif text-3xl leading-tight sm:mt-4 sm:text-5xl"
             >
               Planning and Development Office
             </h1>
-            <p className="mt-6 max-w-md leading-7 text-primary-foreground/80">
+            <p className="mt-3 max-w-md text-sm leading-6 text-primary-foreground/80 sm:mt-6 sm:text-base sm:leading-7">
               A private workspace for staff who maintain the office repository.
             </p>
           </section>
           <section
-            className="px-7 py-8 sm:px-10 lg:px-12 lg:py-10"
+            className="px-5 py-7 sm:px-10 sm:py-8 lg:px-12 lg:py-10"
             aria-labelledby="login-form-title"
           >
             <div className="flex items-center gap-3">
               <LockKeyhole className="size-5 text-primary" aria-hidden="true" />
               <h2
                 id="login-form-title"
-                className="font-serif text-3xl tracking-tight sm:text-4xl"
+                className="font-serif text-2xl tracking-tight sm:text-4xl"
               >
                 Staff Sign in
               </h2>
@@ -102,7 +102,7 @@ export function AdminLoginPage() {
             </p>
             {configurationError ? (
               <div
-                className="mt-7 border-l-2 border-warning bg-warning-soft px-4 py-3 text-sm leading-6 text-foreground"
+                className="mt-7 rounded-xl border border-warning/20 bg-warning-soft px-4 py-3 text-sm leading-6 text-foreground"
                 role="status"
               >
                 <p className="font-semibold">Sign-in is temporarily unavailable</p>
@@ -113,7 +113,7 @@ export function AdminLoginPage() {
               </div>
             ) : null}
             <form
-              className="mt-8 space-y-6"
+              className="mt-6 space-y-5 sm:mt-8 sm:space-y-6"
               onSubmit={handleSubmit(submitLogin)}
               noValidate
             >
@@ -173,7 +173,7 @@ export function AdminLoginPage() {
               </div>
               {authenticationError ? (
                 <p
-                  className="border-l-2 border-danger bg-danger-soft px-4 py-3 text-sm text-danger"
+                  className="rounded-xl border border-danger/20 bg-danger-soft px-4 py-3 text-sm text-danger"
                   role="alert"
                 >
                   {authenticationError}

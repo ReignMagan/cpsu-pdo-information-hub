@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
+import type { ResourceUploadRequest } from '../../src/contracts/resourceUpload'
 import type { R2Config } from '../config/r2'
 import { authorizeResourceUpload, DuplicateResourceError, InvalidResourceUploadError } from './authorizeResourceUpload'
 
 const config: R2Config = { accountId: 'account', accessKeyId: 'key', secretAccessKey: 'secret', bucketName: 'bucket', endpoint: 'https://account.r2.cloudflarestorage.com', publicBaseUrl: 'https://resources.example.edu' }
-const validInput = { filename: 'Annual Report FINAL.pdf', sectionId: 'planning-documents' as const, categoryId: 'planning-documents', year: 2026, mimeType: 'application/pdf', fileSize: 1024 }
+const validInput: ResourceUploadRequest = { filename: 'Annual Report FINAL.pdf', sectionId: 'planning-documents', categoryId: 'planning-documents', year: 2026, mimeType: 'application/pdf', fileSize: 1024 }
 
 describe('authorizeResourceUpload', () => {
   it('derives a safe key and a short-lived upload authorization', async () => {
@@ -20,6 +21,14 @@ describe('authorizeResourceUpload', () => {
 
   it('rejects mismatched MIME types', async () => {
     await expect(authorizeResourceUpload({ ...validInput, mimeType: 'image/png' }, { config })).rejects.toBeInstanceOf(InvalidResourceUploadError)
+  })
+
+  it('rejects Excel files even when extension and MIME type match', async () => {
+    await expect(authorizeResourceUpload({
+      ...validInput,
+      filename: 'statistics.xlsx',
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' as ResourceUploadRequest['mimeType'],
+    }, { config })).rejects.toBeInstanceOf(InvalidResourceUploadError)
   })
 
   it('rejects category and section mismatches', async () => {

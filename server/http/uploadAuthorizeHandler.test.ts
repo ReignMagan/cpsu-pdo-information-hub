@@ -23,4 +23,9 @@ describe('handleUploadAuthorizeRequest', () => {
     const response = await handleUploadAuthorizeRequest(new Request('http://localhost/api/admin/resources/upload-authorize', { method: 'POST', headers: { authorization: 'Bearer valid', 'content-type': 'application/json' }, body: JSON.stringify({ ...body, fileSize: 26 * 1024 * 1024 }) }), { verifyIdToken: async () => identity })
     expect(response.status).toBe(400)
   })
+
+  it('rejects Excel upload requests', async () => {
+    const response = await handleUploadAuthorizeRequest(new Request('http://localhost/api/admin/resources/upload-authorize', { method: 'POST', headers: { authorization: 'Bearer valid', 'content-type': 'application/json' }, body: JSON.stringify({ ...body, filename: 'statistics.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }) }), { verifyIdToken: async () => identity })
+    expect(response.status).toBe(400)
+  })
 })

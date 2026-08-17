@@ -121,13 +121,13 @@ This inventory is intentionally read-only. Upload, replacement, rename, and dele
 
 ## Administrator uploads
 
-`/admin/resources/upload` accepts one PDF, XLSX, JPG, PNG, or WebP file up to 25 MB. The protected server validates the Firebase identity and upload metadata, derives a safe `section/category/year/filename` key, rejects duplicates, and returns a five-minute presigned PUT URL. The browser uploads directly to R2 without receiving R2 credentials.
+`/admin/resources/upload` accepts one PDF, JPG, PNG, or WebP file up to 25 MB. Excel resources already present in the repository remain available for browsing and download, but new XLSX uploads are rejected. The protected server validates the Firebase identity and upload metadata, derives a safe `section/category/year/filename` key, rejects duplicates, and returns a five-minute presigned PUT URL. The browser uploads directly to R2 without receiving R2 credentials.
 
 The R2 API token must have **Object Read & Write** access to the repository and private audit buckets. Configure the public repository bucket CORS policy to allow `PUT` from the exact local and production application origins and to allow the `Content-Type` and `If-None-Match` headers. Do not use a wildcard production origin. Upload authorizations sign `If-None-Match: *`, so R2 rejects a concurrent upload instead of silently overwriting an existing key.
 
 After the direct PUT succeeds, the client calls the protected upload-completion endpoint. The server reads the actual R2 object properties and verifies its key, content length, content type, and upload timestamp before the UI reports success.
 
-Public resource rows provide native browser PDF previews and direct image previews. XLSX resources intentionally show file information and a download action rather than attempting browser editing or rendering.
+Public resource rows provide native browser PDF previews and direct image previews. Legacy non-previewable resources remain available through a generic file row and download action, without a dedicated visualization or preview prompt.
 
 ## Deployment security
 

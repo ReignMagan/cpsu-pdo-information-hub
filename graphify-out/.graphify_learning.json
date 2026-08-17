@@ -1,0 +1,460 @@
+{
+  "generated_at": "2026-08-17T05:22:06.933098+00:00",
+  "nodes": {
+    "agents_cloudflare_r2_repository": {
+      "code_fingerprint": "e4e9477054cb7913b1e241249042514fdda26693c6b8d63444681c0a078aeef0",
+      "label": "Cloudflare R2 File Repository",
+      "last": "2026-08-17T02:52:30.441887+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:52:30.441887+00:00",
+          "outcome": "useful",
+          "q": "I am lost in the 2 buckets please give me full guide in those 2 buckets which is cpsu-pdo-information-hub and cpsu-pdo-audit"
+        },
+        {
+          "date": "2026-08-17T02:45:31.877397+00:00",
+          "outcome": "useful",
+          "q": "this project not been deployed to vercel yet please let us fix the problem guide me"
+        },
+        {
+          "date": "2026-08-17T02:38:57.187136+00:00",
+          "outcome": "useful",
+          "q": "please Identify the possible fix in this error since I am possitive my internet connection is fine though"
+        }
+      ],
+      "score": 2.992478623,
+      "source_file": "AGENTS.md",
+      "status": "preferred",
+      "uses": 3
+    },
+    "agents_protected_admin_flow": {
+      "code_fingerprint": "e4e9477054cb7913b1e241249042514fdda26693c6b8d63444681c0a078aeef0",
+      "label": "Protected Administrator Authorization Flow",
+      "last": "2026-08-17T05:16:58.823403+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T05:16:58.823403+00:00",
+          "outcome": "useful",
+          "q": "check the whole codebase if everything is working, if there's a problem please list it and what is the possible fix in this system"
+        },
+        {
+          "date": "2026-08-17T02:52:30.441887+00:00",
+          "outcome": "useful",
+          "q": "I am lost in the 2 buckets please give me full guide in those 2 buckets which is cpsu-pdo-information-hub and cpsu-pdo-audit"
+        },
+        {
+          "date": "2026-08-17T02:45:31.877397+00:00",
+          "outcome": "useful",
+          "q": "this project not been deployed to vercel yet please let us fix the problem guide me"
+        },
+        {
+          "date": "2026-08-17T02:38:57.187136+00:00",
+          "outcome": "useful",
+          "q": "please Identify the possible fix in this error since I am possitive my internet connection is fine though"
+        }
+      ],
+      "score": 3.992396232,
+      "source_file": "AGENTS.md",
+      "status": "preferred",
+      "uses": 4
+    },
+    "agents_react_application": {
+      "code_fingerprint": "e4e9477054cb7913b1e241249042514fdda26693c6b8d63444681c0a078aeef0",
+      "label": "React Application",
+      "last": "2026-08-17T05:16:58.823403+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T05:16:58.823403+00:00",
+          "outcome": "useful",
+          "q": "check the whole codebase if everything is working, if there's a problem please list it and what is the possible fix in this system"
+        }
+      ],
+      "score": 0.999917609,
+      "source_file": "AGENTS.md",
+      "status": "tentative",
+      "uses": 1
+    },
+    "agents_vercel_server_apis": {
+      "code_fingerprint": "e4e9477054cb7913b1e241249042514fdda26693c6b8d63444681c0a078aeef0",
+      "label": "Vercel Server APIs",
+      "last": "2026-08-17T05:16:58.823403+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T05:16:58.823403+00:00",
+          "outcome": "useful",
+          "q": "check the whole codebase if everything is working, if there's a problem please list it and what is the possible fix in this system"
+        },
+        {
+          "date": "2026-08-17T02:38:57.187136+00:00",
+          "outcome": "useful",
+          "q": "please Identify the possible fix in this error since I am possitive my internet connection is fine though"
+        }
+      ],
+      "score": 1.99730308,
+      "source_file": "AGENTS.md",
+      "status": "preferred",
+      "uses": 2
+    },
+    "design_aesthetics_accessible_long_term_interface": {
+      "code_fingerprint": "1f1fb8c89a2172bb5d39eb867cfea54c2b18f1d63938bcb8b73601a20f0ed93f",
+      "label": "Accessible Long-Term Institutional Interface",
+      "last": "2026-08-17T03:21:39.630455+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T03:21:39.630455+00:00",
+          "outcome": "useful",
+          "q": "look at the choose file button it's not consistent to others"
+        }
+      ],
+      "score": 0.998069156,
+      "source_file": "DESIGN_AESTHETICS.md",
+      "status": "tentative",
+      "uses": 1
+    },
+    "react": {
+      "code_fingerprint": "eeb41e80fd27de1cf9d2d4f6a4fe83c9ec567bd9901159c4565bcbc936ab44d9",
+      "label": "react",
+      "last": "2026-08-17T03:21:39.630455+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T03:21:39.630455+00:00",
+          "outcome": "useful",
+          "q": "look at the choose file button it's not consistent to others"
+        }
+      ],
+      "score": 0.998069156,
+      "source_file": "package.json",
+      "status": "tentative",
+      "uses": 1
+    },
+    "ref_src_contracts_ts": {
+      "code_fingerprint": "d9f5094ac87be2553ffcd05a39d155dfefcde1fee5b3b0f15e2377b1b7c02d46",
+      "label": "src/contracts/**/*.ts",
+      "last": "2026-08-17T02:13:59.335128+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:13:59.335128+00:00",
+          "outcome": "useful",
+          "q": "Remove Excel files from upload so only images and PDF files can be uploaded."
+        }
+      ],
+      "score": 0.996986045,
+      "source_file": "tsconfig.node.json",
+      "status": "tentative",
+      "uses": 1
+    },
+    "server_config_r2_r2config": {
+      "code_fingerprint": "ee22db88db101cd48cdb520b32e70d2ca45115c6e56df571dfefc1d4f0f8c467",
+      "label": "R2Config",
+      "last": "2026-08-17T02:52:30.441887+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:52:30.441887+00:00",
+          "outcome": "useful",
+          "q": "I am lost in the 2 buckets please give me full guide in those 2 buckets which is cpsu-pdo-information-hub and cpsu-pdo-audit"
+        },
+        {
+          "date": "2026-08-17T02:45:31.877397+00:00",
+          "outcome": "useful",
+          "q": "this project not been deployed to vercel yet please let us fix the problem guide me"
+        }
+      ],
+      "score": 1.995093152,
+      "source_file": "server/config/r2.ts",
+      "status": "preferred",
+      "uses": 2
+    },
+    "server_repository_listresources_listresources": {
+      "code_fingerprint": "a866b44e627e0c258568da6083ffdd4f7e0f34991d3949f17fe9924663e7b223",
+      "label": "listResources()",
+      "last": "2026-08-17T02:24:51.746746+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:24:51.746746+00:00",
+          "outcome": "useful",
+          "q": "remove the excess excel visualizations in the whole codebase please analyze it"
+        }
+      ],
+      "score": 0.997160001,
+      "source_file": "server/repository/listResources.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_app_app": {
+      "code_fingerprint": "23a7c366bc6da83163bb98bc5e222b542558bd28be3e47fcea926695781320cb",
+      "label": "App()",
+      "last": "2026-08-17T01:58:12.910676+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T01:58:12.910676+00:00",
+          "outcome": "useful",
+          "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
+        }
+      ],
+      "score": 0.996733749,
+      "source_file": "src/App.tsx",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_components_layout_publicheader": {
+      "code_fingerprint": "af71f7b41c14dd8104cb1e0356b310247c3683aff18e73084e963f8ca408f69a",
+      "label": "PublicHeader.tsx",
+      "last": "2026-08-17T02:06:11.241536+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:06:11.241536+00:00",
+          "outcome": "useful",
+          "q": "Change the header by moving the contents of the menu dropdown to the header, with no hamburger menu unless it is mobile view."
+        }
+      ],
+      "score": 0.996861254,
+      "source_file": "src/components/layout/PublicHeader.tsx",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_components_layout_publicheader_publicheader": {
+      "code_fingerprint": "af71f7b41c14dd8104cb1e0356b310247c3683aff18e73084e963f8ca408f69a",
+      "label": "PublicHeader()",
+      "last": "2026-08-17T02:06:11.241536+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:06:11.241536+00:00",
+          "outcome": "useful",
+          "q": "Change the header by moving the contents of the menu dropdown to the header, with no hamburger menu unless it is mobile view."
+        },
+        {
+          "date": "2026-08-17T01:58:12.910676+00:00",
+          "outcome": "useful",
+          "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
+        }
+      ],
+      "score": 1.993595003,
+      "source_file": "src/components/layout/PublicHeader.tsx",
+      "status": "preferred",
+      "uses": 2
+    },
+    "src_config_navigation": {
+      "code_fingerprint": "efdc0c8c04227867fe0da87888767da73c52c8b3780915d31f13f94e4017b242",
+      "label": "navigation.ts",
+      "last": "2026-08-17T02:06:11.241536+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:06:11.241536+00:00",
+          "outcome": "useful",
+          "q": "Change the header by moving the contents of the menu dropdown to the header, with no hamburger menu unless it is mobile view."
+        }
+      ],
+      "score": 0.996861254,
+      "source_file": "src/config/navigation.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_config_navigation_publicnavigation": {
+      "code_fingerprint": "efdc0c8c04227867fe0da87888767da73c52c8b3780915d31f13f94e4017b242",
+      "label": "publicNavigation",
+      "last": "2026-08-17T02:06:11.241536+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:06:11.241536+00:00",
+          "outcome": "useful",
+          "q": "Change the header by moving the contents of the menu dropdown to the header, with no hamburger menu unless it is mobile view."
+        }
+      ],
+      "score": 0.996861254,
+      "source_file": "src/config/navigation.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_config_repository": {
+      "code_fingerprint": "19c2df2bd5f4d61c1222dc12cfaf3281d0af5dee1f253f2e14dc281049213894",
+      "label": "repository.ts",
+      "last": "2026-08-17T05:16:58.823403+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T05:16:58.823403+00:00",
+          "outcome": "useful",
+          "q": "check the whole codebase if everything is working, if there's a problem please list it and what is the possible fix in this system"
+        },
+        {
+          "date": "2026-08-17T03:15:22.838625+00:00",
+          "outcome": "useful",
+          "q": "I have problem in this the name section files just make it under statistical profile or whatever and make sure to hierarchy in the categories please the no category first and so on whatever the arrangement of the categories please make it like that"
+        }
+      ],
+      "score": 1.997886205,
+      "source_file": "src/config/repository.ts",
+      "status": "preferred",
+      "uses": 2
+    },
+    "src_config_repository_repositorysections": {
+      "code_fingerprint": "19c2df2bd5f4d61c1222dc12cfaf3281d0af5dee1f253f2e14dc281049213894",
+      "label": "repositorySections",
+      "last": "2026-08-17T03:15:22.838625+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T03:15:22.838625+00:00",
+          "outcome": "useful",
+          "q": "I have problem in this the name section files just make it under statistical profile or whatever and make sure to hierarchy in the categories please the no category first and so on whatever the arrangement of the categories please make it like that"
+        }
+      ],
+      "score": 0.997968595,
+      "source_file": "src/config/repository.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_contracts_resource": {
+      "code_fingerprint": "95554b7db3c87feb4f5157b00cfb60857bb5da80bac448631f991933a1c48f42",
+      "label": "resource.ts",
+      "last": "2026-08-17T02:13:59.335128+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:13:59.335128+00:00",
+          "outcome": "useful",
+          "q": "Remove Excel files from upload so only images and PDF files can be uploaded."
+        }
+      ],
+      "score": 0.996986045,
+      "source_file": "src/contracts/resource.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_contracts_resource_resource": {
+      "code_fingerprint": "95554b7db3c87feb4f5157b00cfb60857bb5da80bac448631f991933a1c48f42",
+      "label": "Resource",
+      "last": "2026-08-17T05:16:58.823403+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T05:16:58.823403+00:00",
+          "outcome": "useful",
+          "q": "check the whole codebase if everything is working, if there's a problem please list it and what is the possible fix in this system"
+        },
+        {
+          "date": "2026-08-17T03:21:39.630455+00:00",
+          "outcome": "useful",
+          "q": "look at the choose file button it's not consistent to others"
+        },
+        {
+          "date": "2026-08-17T03:15:22.838625+00:00",
+          "outcome": "useful",
+          "q": "I have problem in this the name section files just make it under statistical profile or whatever and make sure to hierarchy in the categories please the no category first and so on whatever the arrangement of the categories please make it like that"
+        },
+        {
+          "date": "2026-08-17T02:24:51.746746+00:00",
+          "outcome": "useful",
+          "q": "remove the excess excel visualizations in the whole codebase please analyze it"
+        },
+        {
+          "date": "2026-08-17T02:13:59.335128+00:00",
+          "outcome": "useful",
+          "q": "Remove Excel files from upload so only images and PDF files can be uploaded."
+        }
+      ],
+      "score": 4.990101408,
+      "source_file": "src/contracts/resource.ts",
+      "status": "preferred",
+      "uses": 5
+    },
+    "src_contracts_resource_resourcefiledefinitions": {
+      "code_fingerprint": "95554b7db3c87feb4f5157b00cfb60857bb5da80bac448631f991933a1c48f42",
+      "label": "resourceFileDefinitions",
+      "last": "2026-08-17T02:24:51.746746+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:24:51.746746+00:00",
+          "outcome": "useful",
+          "q": "remove the excess excel visualizations in the whole codebase please analyze it"
+        }
+      ],
+      "score": 0.997160001,
+      "source_file": "src/contracts/resource.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_contracts_resource_resourcefilenameschema": {
+      "code_fingerprint": "95554b7db3c87feb4f5157b00cfb60857bb5da80bac448631f991933a1c48f42",
+      "label": "resourceFilenameSchema",
+      "last": "2026-08-17T03:21:39.630455+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T03:21:39.630455+00:00",
+          "outcome": "useful",
+          "q": "look at the choose file button it's not consistent to others"
+        }
+      ],
+      "score": 0.998069156,
+      "source_file": "src/contracts/resource.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_layouts_publiclayout_publiclayout": {
+      "code_fingerprint": "a2763d93771fa933c6bddd2b1a9343616135f8aaaf7f0b6769401617f5de7307",
+      "label": "PublicLayout()",
+      "last": "2026-08-17T02:06:11.241536+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T02:06:11.241536+00:00",
+          "outcome": "useful",
+          "q": "Change the header by moving the contents of the menu dropdown to the header, with no hamburger menu unless it is mobile view."
+        },
+        {
+          "date": "2026-08-17T01:58:12.910676+00:00",
+          "outcome": "useful",
+          "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
+        }
+      ],
+      "score": 1.993595003,
+      "source_file": "src/layouts/PublicLayout.tsx",
+      "status": "preferred",
+      "uses": 2
+    },
+    "src_pages_homepage_homepage": {
+      "code_fingerprint": "320237e6a380c3a0427a989b14dc082e496be0a97a658b9db1cc1141d2e313ad",
+      "label": "HomePage()",
+      "last": "2026-08-17T01:58:12.910676+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T01:58:12.910676+00:00",
+          "outcome": "useful",
+          "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
+        }
+      ],
+      "score": 0.996733749,
+      "source_file": "src/pages/HomePage.tsx",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_pages_repositorypage_repositorypage": {
+      "code_fingerprint": "d559d14322be4812a3530a8d6417d6b15cd35e8013d010857cd7dac3fe7ce3ab",
+      "label": "RepositoryPage()",
+      "last": "2026-08-17T01:58:12.910676+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T01:58:12.910676+00:00",
+          "outcome": "useful",
+          "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
+        }
+      ],
+      "score": 0.996733749,
+      "source_file": "src/pages/RepositoryPage.tsx",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_routes_approuter_approuter": {
+      "code_fingerprint": "1eb93acf3d5d83213822e7022b9a4c5ed9dacb619b158ea2c16d30234e641634",
+      "label": "AppRouter()",
+      "last": "2026-08-17T01:58:12.910676+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T01:58:12.910676+00:00",
+          "outcome": "useful",
+          "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
+        }
+      ],
+      "score": 0.996733749,
+      "source_file": "src/routes/AppRouter.tsx",
+      "status": "tentative",
+      "uses": 1
+    }
+  },
+  "version": 1
+}

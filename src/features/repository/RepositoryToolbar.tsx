@@ -23,7 +23,6 @@ const fileTypeOptions: readonly {
 }[] = [
   { value: "", label: "All file types" },
   { value: "pdf", label: "PDF documents" },
-  { value: "xlsx", label: "Excel workbooks" },
   { value: "image", label: "Images" },
 ];
 
@@ -53,12 +52,12 @@ export function RepositoryToolbar({
   const structure = useRepositoryStructureQuery();
   const hasFilters = Boolean(query || section || fileType || sort !== "newest");
   const controlClass =
-    "mt-2 min-h-12 w-full border border-strong-border bg-surface px-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/15";
+    "mt-2 min-h-12 w-full rounded-xl border border-strong-border bg-surface px-4 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/15";
 
   return (
-    <div className="mt-6 border-y border-strong-border bg-surface px-4 py-4 sm:px-5">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12 lg:items-end">
-        <label className="block lg:col-span-5">
+    <div className="mt-6 rounded-2xl border border-border bg-surface px-4 py-5 shadow-[0_12px_32px_rgba(20,83,45,0.06)] sm:px-5">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-12 lg:items-end">
+        <label className="col-span-2 block lg:col-span-5">
           <span className="text-sm font-semibold">Search repository</span>
           <span className="relative mt-2 block">
             <Search
@@ -72,12 +71,12 @@ export function RepositoryToolbar({
                 onChange({ fileType, query: event.target.value, section, sort })
               }
               placeholder="Search files or categories"
-              className="min-h-12 w-full border border-strong-border bg-surface py-3 pl-11 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/15"
+              className="min-h-12 w-full rounded-xl border border-strong-border bg-surface py-3 pl-11 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/15"
             />
           </span>
         </label>
 
-        <label className="block lg:col-span-3">
+        <label className="col-span-2 block lg:col-span-3">
           <span className="text-sm font-semibold">Section</span>
           <select
             value={section}

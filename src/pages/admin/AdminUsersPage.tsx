@@ -65,7 +65,7 @@ export function AdminUsersPage() {
     },
   });
   return (
-    <section className="mt-10" aria-labelledby="users-title">
+    <section className="mt-6 sm:mt-10" aria-labelledby="users-title">
       <div className="flex flex-wrap items-end justify-between gap-5">
         <div>
           <p className="text-xs font-bold tracking-[0.14em] text-primary">
@@ -73,7 +73,7 @@ export function AdminUsersPage() {
           </p>
           <h1
             id="users-title"
-            className="mt-2 font-serif text-4xl tracking-tight"
+            className="mt-2 font-serif text-3xl tracking-tight sm:text-4xl"
           >
             Staff access
           </h1>
@@ -83,7 +83,7 @@ export function AdminUsersPage() {
         </div>
         <button
           onClick={() => setShowForm((value) => !value)}
-          className="inline-flex min-h-11 cursor-pointer items-center gap-2 bg-primary px-5 text-sm font-semibold text-primary-foreground"
+          className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 bg-primary px-5 text-sm font-semibold text-primary-foreground min-[24rem]:w-auto"
         >
           <Plus className="size-4" />
           Add staff member
@@ -95,7 +95,7 @@ export function AdminUsersPage() {
             event.preventDefault();
             create.mutate();
           }}
-          className="mt-8 grid gap-5 border-y border-strong-border bg-surface p-6 md:grid-cols-3"
+          className="mt-6 grid gap-5 rounded-2xl border border-border bg-surface p-4 shadow-[0_10px_28px_rgba(20,83,45,0.05)] sm:mt-8 sm:p-6 md:grid-cols-3"
         >
           <label className="text-sm font-semibold">
             Full name
@@ -153,7 +153,71 @@ export function AdminUsersPage() {
         </p>
       ) : null}
       {users.isSuccess ? (
-        <div className="mt-8 overflow-x-auto border border-strong-border bg-surface">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.05)] sm:mt-8">
+          <ul className="divide-y divide-border md:hidden">
+            {users.data.map((account) => (
+              <li key={account.uid} className="p-4">
+                <p className="font-semibold">
+                  {account.displayName || "Unnamed staff member"}
+                </p>
+                <p className="mt-1 break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
+                  {account.email}
+                </p>
+                <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-xs font-bold tracking-wide text-muted-foreground">
+                      CREATED
+                    </p>
+                    <p className="mt-1">
+                      {new Intl.DateTimeFormat("en-PH", {
+                        dateStyle: "medium",
+                      }).format(new Date(account.createdAt))}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold tracking-wide text-muted-foreground">
+                      STATUS
+                    </p>
+                    <p className="mt-1">
+                      {account.disabled ? "Access paused" : "Active"}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-2 border-t border-border pt-4">
+                  <button
+                    type="button"
+                    disabled={account.uid === user?.uid}
+                    onClick={() =>
+                      update.mutate({
+                        uid: account.uid,
+                        displayName: account.displayName || account.email,
+                        disabled: !account.disabled,
+                      })
+                    }
+                    className="inline-flex min-h-11 cursor-pointer items-center justify-center border border-primary px-2 text-sm font-semibold text-primary disabled:opacity-40"
+                  >
+                    <ShieldCheck className="mr-1.5 size-4" />
+                    {account.disabled ? "Restore" : "Pause"}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={account.uid === user?.uid}
+                    onClick={() =>
+                      setDeleteTarget({
+                        uid: account.uid,
+                        email: account.email,
+                      })
+                    }
+                    className="inline-flex min-h-11 cursor-pointer items-center justify-center border border-danger/35 px-2 text-sm font-semibold text-danger disabled:opacity-40"
+                  >
+                    <Trash2 className="mr-1.5 size-4" />
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[44rem] text-left">
             <thead>
               <tr className="border-b border-strong-border text-xs tracking-wider text-muted-foreground">
@@ -217,6 +281,7 @@ export function AdminUsersPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       ) : null}
       {deleteTarget ? (
@@ -237,7 +302,7 @@ export function AdminUsersPage() {
                   : "This staff account could not be removed."}
               </p>
             ) : null}
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 grid gap-3 min-[24rem]:flex min-[24rem]:justify-end">
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}

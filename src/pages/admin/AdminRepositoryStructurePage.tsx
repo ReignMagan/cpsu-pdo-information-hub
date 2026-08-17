@@ -80,7 +80,7 @@ export function AdminRepositoryStructurePage() {
         changes the visible title; existing file paths remain stable.
       </p>
       <form
-        className="mt-6 flex flex-col gap-3 border-y border-strong-border bg-surface p-5 sm:flex-row"
+        className="mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4 shadow-[0_10px_28px_rgba(20,83,45,0.05)] sm:flex-row sm:p-5"
         onSubmit={(event) => {
           event.preventDefault();
           if (sectionTitle.trim())
@@ -129,9 +129,9 @@ export function AdminRepositoryStructurePage() {
         {structure.data?.map((section) => (
           <article
             key={section.id}
-            className="border border-strong-border bg-surface"
+            className="overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.05)]"
           >
-            <header className="flex flex-wrap items-center justify-between gap-4 border-b border-strong-border px-5 py-4">
+            <header className="flex flex-col items-start justify-between gap-4 border-b border-strong-border px-4 py-4 min-[28rem]:flex-row min-[28rem]:items-center sm:px-5">
               <div>
                 <h2 className="font-serif text-2xl">{section.title}</h2>
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -139,7 +139,7 @@ export function AdminRepositoryStructurePage() {
                   {section.categories.length === 1 ? "category" : "categories"}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex w-full flex-wrap gap-2 min-[28rem]:w-auto">
                 <button
                   type="button"
                   onClick={() =>
@@ -149,7 +149,7 @@ export function AdminRepositoryStructurePage() {
                       value: "",
                     })
                   }
-                  className="cursor-pointer text-sm font-semibold text-primary"
+                  className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary"
                 >
                   <Plus className="mr-1 inline size-4" />
                   Add category
@@ -164,7 +164,7 @@ export function AdminRepositoryStructurePage() {
                       value: section.title,
                     })
                   }
-                  className="cursor-pointer text-sm font-semibold text-primary"
+                  className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary"
                 >
                   <Pencil className="mr-1 inline size-4" />
                   Edit
@@ -179,7 +179,7 @@ export function AdminRepositoryStructurePage() {
                       title: section.title,
                     })
                   }
-                  className="cursor-pointer text-sm font-semibold text-danger"
+                  className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-danger"
                 >
                   <Trash2 className="mr-1 inline size-4" />
                   Delete
@@ -191,10 +191,10 @@ export function AdminRepositoryStructurePage() {
                 {section.categories.map((category) => (
                   <li
                     key={category.id}
-                    className="flex flex-wrap items-center justify-between gap-4 px-5 py-4"
+                    className="flex flex-col items-start justify-between gap-2 px-4 py-4 min-[28rem]:flex-row min-[28rem]:items-center sm:px-5"
                   >
                     <span className="font-medium">{category.title}</span>
-                    <span className="flex gap-4">
+                    <span className="flex gap-3">
                       <button
                         type="button"
                         onClick={() =>
@@ -205,7 +205,7 @@ export function AdminRepositoryStructurePage() {
                             value: category.title,
                           })
                         }
-                        className="cursor-pointer text-sm font-semibold text-primary"
+                        className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary"
                       >
                         <Pencil className="mr-1 inline size-4" />
                         Edit
@@ -220,7 +220,7 @@ export function AdminRepositoryStructurePage() {
                             title: category.title,
                           })
                         }
-                        className="cursor-pointer text-sm font-semibold text-danger"
+                        className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-danger"
                       >
                         <Trash2 className="mr-1 inline size-4" />
                         Delete
@@ -269,7 +269,7 @@ export function AdminRepositoryStructurePage() {
                 className="mt-2 min-h-12 w-full border border-strong-border px-4 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </label>
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 grid gap-3 min-[24rem]:flex min-[24rem]:justify-end">
               <button
                 type="button"
                 onClick={() => setEditor(null)}
@@ -297,7 +297,7 @@ export function AdminRepositoryStructurePage() {
             <p className="text-sm leading-6 text-muted-foreground">
               This action removes the repository label and cannot be undone.
             </p>
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 grid gap-3 min-[24rem]:flex min-[24rem]:justify-end">
               <button
                 type="button"
                 onClick={() => setPendingDelete(null)}
