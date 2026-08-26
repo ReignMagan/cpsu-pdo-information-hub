@@ -9,6 +9,7 @@ export const auditActions = [
   'resource.uploaded',
   'resource.renamed',
   'resource.deleted',
+  'resource.accessed',
   'structure.changed',
   'administrator.created',
   'administrator.updated',

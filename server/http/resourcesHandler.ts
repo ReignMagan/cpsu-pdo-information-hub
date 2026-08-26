@@ -5,6 +5,11 @@ import {
   listResources,
   type ListResourcesDependencies,
 } from '../repository/listResources.ts'
+import type {
+  AdminResourceListResponse,
+  PublicResourceListResponse,
+  ResourceQuery,
+} from '../../src/contracts/resource.ts'
 
 const jsonHeaders: Record<string, string> = {
   'cache-control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=300',
@@ -18,6 +23,10 @@ function jsonResponse(body: unknown, status = 200, headers = jsonHeaders) {
 export async function handleResourcesRequest(
   request: Request,
   dependencies: ListResourcesDependencies = {},
+  resourceLister: (
+    query: ResourceQuery,
+    dependencies?: ListResourcesDependencies,
+  ) => Promise<PublicResourceListResponse | AdminResourceListResponse> = listResources,
 ): Promise<Response> {
   if (request.method !== 'GET') {
     return jsonResponse(
@@ -79,7 +88,7 @@ export async function handleResourcesRequest(
   }
 
   try {
-    return jsonResponse(await listResources(queryResult.data, dependencies))
+    return jsonResponse(await resourceLister(queryResult.data, dependencies))
   } catch (error) {
     if (error instanceof InvalidResourceCursorError) {
       return jsonResponse(

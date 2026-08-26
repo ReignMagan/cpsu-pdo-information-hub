@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, LockKeyhole } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, LockKeyhole } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -28,6 +28,7 @@ export function AdminLoginPage() {
   const [authenticationError, setAuthenticationError] = useState<string | null>(
     null,
   );
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -151,17 +152,32 @@ export function AdminLoginPage() {
                 >
                   Password
                 </label>
-                <input
-                  id="admin-password"
-                  type="password"
-                  autoComplete="current-password"
-                  aria-invalid={Boolean(errors.password)}
-                  aria-describedby={
-                    errors.password ? "admin-password-error" : undefined
-                  }
-                  className="mt-2 min-h-12 w-full border border-strong-border bg-surface px-4 text-base outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  {...register("password")}
-                />
+                <div className="relative mt-2">
+                  <input
+                    id="admin-password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    aria-invalid={Boolean(errors.password)}
+                    aria-describedby={
+                      errors.password ? "admin-password-error" : undefined
+                    }
+                    className="min-h-12 w-full border border-strong-border bg-surface py-3 pl-4 pr-14 text-base outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    {...register("password")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                    className="absolute inset-y-0 right-0 inline-flex w-12 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-primary"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="size-5" aria-hidden="true" />
+                    ) : (
+                      <Eye className="size-5" aria-hidden="true" />
+                    )}
+                  </button>
+                </div>
                 {errors.password ? (
                   <p
                     id="admin-password-error"
@@ -184,7 +200,7 @@ export function AdminLoginPage() {
                 disabled={isSubmitting || Boolean(configurationError)}
                 className="inline-flex min-h-12 w-full cursor-pointer items-center justify-center bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-55 sm:w-auto"
               >
-                {isSubmitting ? "Signing in…" : "Sign in securely"}
+                {isSubmitting ? "Signing in…" : "Sign in"}
               </button>
             </form>
             <p className="mt-8 border-t border-border pt-5 text-sm leading-6 text-muted-foreground">

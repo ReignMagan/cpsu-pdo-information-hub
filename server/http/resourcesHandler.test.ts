@@ -7,7 +7,6 @@ const testR2Config = {
   secretAccessKey: 'test-secret-key',
   bucketName: 'test-bucket',
   endpoint: 'https://test-account.r2.cloudflarestorage.com',
-  publicBaseUrl: 'https://resources.example.edu',
 }
 
 const emptyRepository = {
@@ -26,6 +25,30 @@ describe('handleResourcesRequest', () => {
       data: [],
       meta: { total: 0, nextCursor: null },
     })
+  })
+
+  it('exposes metadata without storage keys or direct file URLs', async () => {
+    const response = await handleResourcesRequest(
+      new Request('http://localhost/api/resources'),
+      {
+        config: testR2Config,
+        listObjects: async () => ({
+          Contents: [{
+            Key: 'planning-documents/planning-documents/2026/Annual Report.pdf',
+            Size: 4096,
+            LastModified: new Date('2026-08-12T08:00:00.000Z'),
+          }],
+          IsTruncated: false,
+        }),
+      },
+    )
+    const body = await response.json() as { data: Record<string, unknown>[] }
+
+    expect(response.status).toBe(200)
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0]).not.toHaveProperty('key')
+    expect(body.data[0]).not.toHaveProperty('downloadUrl')
+    expect(body.data[0]).not.toHaveProperty('previewUrl')
   })
 
   it('rejects unsupported HTTP methods', async () => {

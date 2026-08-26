@@ -1,6 +1,9 @@
 import type { DecodedIdToken } from 'firebase-admin/auth'
 import { AdminAuthenticationError, AdminAuthorizationError, authenticateAdminRequest } from '../auth/authenticateAdminRequest.ts'
-import type { ListResourcesDependencies } from '../repository/listResources.ts'
+import {
+  listAdminResources,
+  type ListResourcesDependencies,
+} from '../repository/listResources.ts'
 import { handleResourcesRequest } from './resourcesHandler.ts'
 
 type AdminResourcesDependencies = {
@@ -58,7 +61,7 @@ export async function handleAdminResourcesRequest(
   const resourceResponse = await handleResourcesRequest(request, {
     environment: dependencies.environment,
     ...dependencies.resources,
-  })
+  }, listAdminResources)
   const headers = new Headers(resourceResponse.headers)
   headers.set('cache-control', 'private, no-store')
   return new Response(resourceResponse.body, {

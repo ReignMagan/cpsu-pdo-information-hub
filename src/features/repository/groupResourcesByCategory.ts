@@ -1,13 +1,13 @@
 import { repositorySections } from "../../config/repository";
-import type { Resource } from "../../contracts/resource";
+import type { PublicResource } from "../../contracts/resource";
 
 export type ResourceCategoryGroup = {
   categoryId: string;
   categoryTitle: string;
   isSectionRoot: boolean;
-  sectionId: Resource["sectionId"];
+  sectionId: PublicResource["sectionId"];
   sectionTitle: string;
-  resources: Resource[];
+  resources: PublicResource[];
 };
 
 type StructureSection = {
@@ -17,7 +17,7 @@ type StructureSection = {
 };
 
 export function groupResourcesByCategory(
-  resources: Resource[],
+  resources: PublicResource[],
   sections: readonly StructureSection[] = repositorySections,
 ): ResourceCategoryGroup[] {
   const groups = new Map<string, ResourceCategoryGroup>();
@@ -37,7 +37,8 @@ export function groupResourcesByCategory(
     const category = resource.categoryId
       ? categoryById.get(resource.categoryId)
       : undefined;
-    const groupId = resource.categoryId ?? `${resource.sectionId}--section-files`;
+    const groupId =
+      resource.categoryId ?? `${resource.sectionId}--section-files`;
 
     const existing = groups.get(groupId);
     if (existing) {

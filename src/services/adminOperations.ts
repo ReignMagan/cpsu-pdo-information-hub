@@ -4,6 +4,7 @@ import {
   administratorSchema,
   type Administrator,
 } from "../contracts/adminOperations";
+import { parseApiError, readJsonResponse } from "./apiResponse";
 
 async function request(
   user: User,
@@ -19,18 +20,12 @@ async function request(
     },
     body: body ? JSON.stringify(body) : undefined,
   });
-  const payload: unknown = await response.json();
-  if (!response.ok)
+  const payload = await readJsonResponse(response);
+  if (!response.ok) {
     throw new Error(
-      typeof payload === "object" &&
-        payload &&
-        "error" in payload &&
-        typeof payload.error === "object" &&
-        payload.error &&
-        "message" in payload.error
-        ? String(payload.error.message)
-        : "The administrator operation failed.",
+      parseApiError(payload, "The administrator operation failed.").message,
     );
+  }
   return payload;
 }
 export async function getAdministrators(user: User) {

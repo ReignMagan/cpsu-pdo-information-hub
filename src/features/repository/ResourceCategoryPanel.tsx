@@ -1,14 +1,13 @@
-import {
-  Download,
-  Eye,
-  File,
-  FileImage,
-  FileText,
-} from "lucide-react";
+import { Eye, File, FileImage, FileText, LoaderCircle } from "lucide-react";
 import { useState } from "react";
-import type { Resource } from "../../contracts/resource";
-import { ResourcePreview } from "./ResourcePreview";
+import type { PublicResource } from "../../contracts/resource";
+import { authorizePublicResourcePreview } from "../../services/publicResourcePreview";
+import {
+  formatResourceDate,
+  formatResourceFileSize,
+} from "../../utils/formatResourceMetadata";
 import type { ResourceCategoryGroup } from "./groupResourcesByCategory";
+import { PublicResourcePreviewDialog } from "./PublicResourcePreviewDialog";
 
 type ResourceCategoryPanelProps = {
   group: ResourceCategoryGroup;
@@ -20,24 +19,21 @@ const fileTypeDetails = {
   image: { icon: FileImage, label: "IMG" },
 } as const;
 
-function formatFileSize(bytes: number) {
-  if (bytes < 1_024) return `${bytes} B`;
-  if (bytes < 1_048_576) return `${(bytes / 1_024).toFixed(1)} KB`;
-  return `${(bytes / 1_048_576).toFixed(1)} MB`;
-}
+type ResourceRowProps = {
+  resource: PublicResource;
+  isPending: boolean;
+  error?: string;
+  onPreview: (resource: PublicResource) => void;
+};
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-PH", {
-    dateStyle: "medium",
-    timeZone: "Asia/Manila",
-  }).format(new Date(value));
-}
-
-function ResourceRow({ resource }: { resource: Resource }) {
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+function ResourceRow({
+  resource,
+  isPending,
+  error,
+  onPreview,
+}: ResourceRowProps) {
   const details = fileTypeDetails[resource.fileType];
   const FileIcon = details.icon;
-  const canPreview = resource.fileType !== "xlsx" && Boolean(resource.previewUrl);
 
   return (
     <li className="py-4 sm:py-5">
@@ -63,70 +59,130 @@ function ResourceRow({ resource }: { resource: Resource }) {
             </div>
             <div className="flex gap-1">
               <dt className="sr-only">File size</dt>
-              <dd>{formatFileSize(resource.fileSize)}</dd>
+              <dd>{formatResourceFileSize(resource.fileSize)}</dd>
             </div>
             <div className="flex gap-1">
               <dt className="sr-only">Uploaded</dt>
-              <dd>Uploaded {formatDate(resource.uploadedAt)}</dd>
+              <dd>Uploaded {formatResourceDate(resource.uploadedAt)}</dd>
             </div>
           </dl>
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
-            {canPreview ? (
+          {resource.fileType === "xlsx" ? (
+            <p className="mt-4 text-xs leading-5 text-muted-foreground">
+              Online preview is not available for spreadsheet files. Public
+              downloads are disabled.
+            </p>
+          ) : (
+            <div className="mt-4">
               <button
                 type="button"
-                onClick={() => setIsPreviewOpen((current) => !current)}
-                aria-expanded={isPreviewOpen}
-                className="inline-flex min-h-10 cursor-pointer items-center gap-2 text-sm font-semibold text-primary underline decoration-primary/35 underline-offset-4 hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+                onClick={() => onPreview(resource)}
+                disabled={isPending}
+                className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-primary px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
               >
-                <Eye className="size-4" aria-hidden="true" />
-                {isPreviewOpen ? "Hide preview" : "Preview"}
+                {isPending ? (
+                  <LoaderCircle
+                    className="size-4 animate-spin motion-reduce:animate-none"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Eye className="size-4" aria-hidden="true" />
+                )}
+                {isPending ? "Opening..." : "View file"}
               </button>
-            ) : null}
-            <a
-              href={resource.downloadUrl}
-              download={resource.filename}
-              className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-primary underline decoration-primary/35 underline-offset-4 hover:decoration-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
-            >
-              <Download className="size-4" aria-hidden="true" />
-              Download
-            </a>
-          </div>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                Public view mode is available. Download is restricted.
+              </p>
+              {error ? (
+                <p
+                  className="mt-2 text-xs font-medium text-destructive"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              ) : null}
+            </div>
+          )}
         </div>
       </div>
-      {isPreviewOpen && canPreview ? (
-        <ResourcePreview
-          resource={resource}
-          onClose={() => setIsPreviewOpen(false)}
-        />
-      ) : null}
     </li>
   );
 }
 
 export function ResourceCategoryPanel({ group }: ResourceCategoryPanelProps) {
+  const [pendingId, setPendingId] = useState<string>();
+  const [preview, setPreview] = useState<{
+    resource: PublicResource;
+    url: string;
+  }>();
+  const [previewError, setPreviewError] = useState<{
+    id: string;
+    message: string;
+  }>();
+
+  async function handlePreview(resource: PublicResource) {
+    setPendingId(resource.id);
+    setPreviewError(undefined);
+
+    try {
+      const access = await authorizePublicResourcePreview(resource.id);
+      setPreview({ resource, url: access.url });
+    } catch (error) {
+      setPreviewError({
+        id: resource.id,
+        message:
+          error instanceof Error
+            ? error.message
+            : "The file preview could not be opened.",
+      });
+    } finally {
+      setPendingId(undefined);
+    }
+  }
+
   return (
-    <article
-      className="min-w-0"
-      aria-label={group.isSectionRoot ? `${group.sectionTitle} files` : undefined}
-    >
-      {!group.isSectionRoot ? (
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-2 border-b border-strong-border pb-2">
-          <h4 className="font-serif text-xl tracking-tight text-foreground">
-            {group.categoryTitle}
-          </h4>
-          <p className="text-sm text-muted-foreground">
-            {group.resources.length}{" "}
-            {group.resources.length === 1 ? "file" : "files"}
-          </p>
+    <>
+      <article
+        className="min-w-0"
+        aria-label={
+          group.isSectionRoot ? `${group.sectionTitle} files` : undefined
+        }
+      >
+        {!group.isSectionRoot ? (
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-2 border-b border-strong-border pb-2">
+            <h4 className="font-serif text-xl tracking-tight text-foreground">
+              {group.categoryTitle}
+            </h4>
+            <p className="text-sm text-muted-foreground">
+              {group.resources.length}{" "}
+              {group.resources.length === 1 ? "file" : "files"}
+            </p>
+          </div>
+        ) : null}
+        <div className="overflow-hidden rounded-2xl border border-border border-t-4 border-t-primary bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.06)]">
+          <ul className="divide-y divide-strong-border px-4 sm:px-6">
+            {group.resources.map((resource) => (
+              <ResourceRow
+                key={resource.id}
+                resource={resource}
+                isPending={pendingId === resource.id}
+                error={
+                  previewError?.id === resource.id
+                    ? previewError.message
+                    : undefined
+                }
+                onPreview={handlePreview}
+              />
+            ))}
+          </ul>
         </div>
+      </article>
+      {preview ? (
+        <PublicResourcePreviewDialog
+          resource={preview.resource}
+          url={preview.url}
+          onClose={() => setPreview(undefined)}
+        />
       ) : null}
-      <div className="overflow-hidden rounded-2xl border border-border border-t-4 border-t-primary bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.06)]">
-        <ul className="divide-y divide-strong-border px-4 sm:px-6">
-          {group.resources.map((resource) => (
-            <ResourceRow key={resource.key} resource={resource} />
-          ))}
-        </ul>
-      </div>
-    </article>
+    </>
   );
 }

@@ -6,18 +6,16 @@ const validEnvironment = {
   R2_ACCESS_KEY_ID: 'access-key',
   R2_SECRET_ACCESS_KEY: 'secret-key',
   R2_BUCKET_NAME: 'repository-bucket',
-  R2_PUBLIC_BASE_URL: 'https://resources.example.edu/',
 }
 
 describe('getR2Config', () => {
-  it('creates the default account endpoint and normalizes the public URL', () => {
+  it('creates the default private S3 API endpoint', () => {
     expect(getR2Config(validEnvironment)).toEqual({
       accountId: 'account-id',
       accessKeyId: 'access-key',
       secretAccessKey: 'secret-key',
       bucketName: 'repository-bucket',
       endpoint: 'https://account-id.r2.cloudflarestorage.com',
-      publicBaseUrl: 'https://resources.example.edu',
     })
   })
 
@@ -40,7 +38,6 @@ describe('getR2Config', () => {
     expect(getR2Config({
       ...validEnvironment,
       R2_ENDPOINT: 'http://127.0.0.1:9000',
-      R2_PUBLIC_BASE_URL: 'http://localhost:9000/repository',
     }).endpoint).toBe('http://127.0.0.1:9000')
     expect(() => getR2Config({
       ...validEnvironment,
@@ -52,7 +49,7 @@ describe('getR2Config', () => {
     expect(() => getR2Config({
       ...validEnvironment,
       VERCEL_ENV: 'production',
-      R2_PUBLIC_BASE_URL: 'http://localhost:9000/repository',
+      R2_ENDPOINT: 'http://localhost:9000',
     })).toThrow(R2ConfigurationError)
   })
 

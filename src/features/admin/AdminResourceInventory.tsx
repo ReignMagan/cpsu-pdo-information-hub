@@ -2,10 +2,8 @@ import {
   ChevronLeft,
   ChevronRight,
   FileSearch,
-  Pencil,
   RefreshCw,
   Search,
-  Trash2,
 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDeferredValue, useMemo, useState } from "react";
@@ -14,16 +12,30 @@ import {
   repositorySections,
 } from "../../config/repository";
 import type {
-  Resource,
+  AdminResource,
   ResourceFileType,
   ResourceQuery,
   ResourceSort,
 } from "../../contracts/resource";
+import type { AdminResourceAccessMode } from "../../contracts/adminResourceAccess";
 import { useAdminResourcesQuery } from "./useAdminResourcesQuery";
 import { deleteResource, renameResource } from "../../services/adminOperations";
+import { authorizeAdminResourceAccess } from "../../services/adminResourceAccess";
 import { useAuth } from "../auth/useAuth";
-import { AppDialog } from "../../components/ui/AppDialog";
 import { formatResourceFileType } from "../../utils/formatResourceFileType";
+import {
+  formatResourceDate,
+  formatResourceFileSize,
+} from "../../utils/formatResourceMetadata";
+import { AdminResourceActions } from "./AdminResourceActions";
+import {
+  AdminResourceDeleteDialog,
+  AdminResourcePreviewDialog,
+  AdminResourceRenameDialog,
+  type DeleteTarget,
+  type PreviewTarget,
+  type RenameTarget,
+} from "./AdminResourceDialogs";
 
 const fileTypeOptions: readonly {
   value: ResourceFileType | "";
@@ -43,53 +55,7 @@ const sortOptions: readonly { value: ResourceSort; label: string }[] = [
   { value: "file-type", label: "File type" },
 ];
 
-function formatFileSize(bytes: number) {
-  if (bytes < 1_024) return `${bytes} B`;
-  if (bytes < 1_048_576) return `${(bytes / 1_024).toFixed(1)} KB`;
-  return `${(bytes / 1_048_576).toFixed(1)} MB`;
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-PH", {
-    dateStyle: "medium",
-    timeZone: "Asia/Manila",
-  }).format(new Date(value));
-}
-
 type PageState = { cursor?: string; history: (string | undefined)[] };
-
-type ResourceActionsProps = {
-  resource: Resource;
-  onDelete: (resource: Resource) => void;
-  onRename: (resource: Resource) => void;
-};
-
-function ResourceActions({
-  resource,
-  onDelete,
-  onRename,
-}: ResourceActionsProps) {
-  return (
-    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-nowrap sm:gap-4">
-      <button
-        type="button"
-        onClick={() => onRename(resource)}
-        className="inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center whitespace-nowrap border border-primary px-3 text-sm font-semibold text-primary sm:min-h-0 sm:border-0 sm:p-0"
-      >
-        <Pencil className="mr-1.5 size-4" aria-hidden="true" />
-        Rename
-      </button>
-      <button
-        type="button"
-        onClick={() => onDelete(resource)}
-        className="inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center whitespace-nowrap border border-danger/35 px-3 text-sm font-semibold text-danger sm:min-h-0 sm:border-0 sm:p-0"
-      >
-        <Trash2 className="mr-1.5 size-4" aria-hidden="true" />
-        Delete
-      </button>
-    </div>
-  );
-}
 
 export function AdminResourceInventory() {
   const { user } = useAuth();
@@ -100,15 +66,11 @@ export function AdminResourceInventory() {
   const [fileType, setFileType] = useState<ResourceFileType>();
   const [sort, setSort] = useState<ResourceSort>("newest");
   const [page, setPage] = useState<PageState>({ history: [] });
-  const [renameTarget, setRenameTarget] = useState<{
-    key: string;
-    original: string;
-    value: string;
-  } | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<{
-    key: string;
-    filename: string;
-  } | null>(null);
+  const [renameTarget, setRenameTarget] = useState<RenameTarget | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
+  const [previewTarget, setPreviewTarget] = useState<PreviewTarget | null>(
+    null,
+  );
   const query = useMemo<Partial<ResourceQuery>>(
     () => ({
       q: deferredSearch || undefined,
@@ -152,12 +114,46 @@ export function AdminResourceInventory() {
       await refreshResources();
     },
   });
+  const accessMutation = useMutation({
+    mutationFn: ({
+      resource,
+      mode,
+    }: {
+      resource: AdminResource;
+      mode: AdminResourceAccessMode;
+    }) => {
+      if (!user) throw new Error("Please sign in to access this file.");
+      return authorizeAdminResourceAccess(user, resource.key, mode);
+    },
+    onSuccess: (access, request) => {
+      if (request.mode === "preview") {
+        setPreviewTarget({ resource: request.resource, url: access.url });
+        return;
+      }
+
+      const link = document.createElement("a");
+      link.href = access.url;
+      link.download = request.resource.filename;
+      link.rel = "noopener noreferrer";
+      document.body.append(link);
+      link.click();
+      link.remove();
+    },
+  });
 
   function resetPage() {
     setPage({ history: [] });
   }
 
-  function openRename(resource: Resource) {
+  function requestAccess(
+    resource: AdminResource,
+    mode: AdminResourceAccessMode,
+  ) {
+    accessMutation.reset();
+    accessMutation.mutate({ resource, mode });
+  }
+
+  function openRename(resource: AdminResource) {
     setRenameTarget({
       key: resource.key,
       original: resource.filename,
@@ -165,7 +161,7 @@ export function AdminResourceInventory() {
     });
   }
 
-  function openDelete(resource: Resource) {
+  function openDelete(resource: AdminResource) {
     setDeleteTarget({ key: resource.key, filename: resource.filename });
   }
 
@@ -222,8 +218,7 @@ export function AdminResourceInventory() {
             onChange={(event) => {
               setFileType(
                 (event.target.value || undefined) as
-                  | ResourceFileType
-                  | undefined,
+                  ResourceFileType | undefined,
               );
               resetPage();
             }}
@@ -266,9 +261,7 @@ export function AdminResourceInventory() {
             className="mx-auto size-7 animate-spin text-primary motion-reduce:animate-none"
             aria-hidden="true"
           />
-          <p className="mt-4 font-medium">
-            Loading repository files…
-          </p>
+          <p className="mt-4 font-medium">Loading repository files…</p>
         </div>
       ) : null}
       {resourcesQuery.isError ? (
@@ -316,12 +309,9 @@ export function AdminResourceInventory() {
           <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.05)] md:hidden">
             {resourcesQuery.data.data.map((resource) => (
               <li key={resource.key} className="p-4">
-                <a
-                  href={resource.downloadUrl}
-                  className="break-words text-sm font-semibold leading-6 text-primary underline decoration-primary/30 underline-offset-4 [overflow-wrap:anywhere]"
-                >
+                <p className="break-words text-sm font-semibold leading-6 [overflow-wrap:anywhere]">
                   {resource.filename}
-                </a>
+                </p>
                 <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
                   <div className="col-span-2">
                     <dt className="text-xs font-bold tracking-wide text-muted-foreground">
@@ -333,8 +323,8 @@ export function AdminResourceInventory() {
                       )?.title ?? resource.sectionId}
                       <span className="block text-xs text-muted-foreground">
                         {resource.categoryId
-                          ? repositoryCategoryById.get(resource.categoryId)
-                              ?.title ?? resource.categoryId
+                          ? (repositoryCategoryById.get(resource.categoryId)
+                              ?.title ?? resource.categoryId)
                           : "No category"}
                       </span>
                     </dd>
@@ -352,7 +342,7 @@ export function AdminResourceInventory() {
                     <dd className="mt-1">
                       {formatResourceFileType(resource.fileType)}
                       <span className="block text-xs text-muted-foreground">
-                        {formatFileSize(resource.fileSize)}
+                        {formatResourceFileSize(resource.fileSize)}
                       </span>
                     </dd>
                   </div>
@@ -360,12 +350,30 @@ export function AdminResourceInventory() {
                     <dt className="text-xs font-bold tracking-wide text-muted-foreground">
                       UPDATED
                     </dt>
-                    <dd className="mt-1">{formatDate(resource.uploadedAt)}</dd>
+                    <dd className="mt-1">
+                      {formatResourceDate(resource.uploadedAt)}
+                    </dd>
                   </div>
                 </dl>
                 <div className="mt-4 border-t border-border pt-4">
-                  <ResourceActions
+                  <AdminResourceActions
                     resource={resource}
+                    accessDisabled={accessMutation.isPending}
+                    accessPendingMode={
+                      accessMutation.isPending &&
+                      accessMutation.variables?.resource.key === resource.key
+                        ? accessMutation.variables.mode
+                        : undefined
+                    }
+                    accessError={
+                      accessMutation.isError &&
+                      accessMutation.variables?.resource.key === resource.key
+                        ? accessMutation.error instanceof Error
+                          ? accessMutation.error.message
+                          : "The file could not be accessed."
+                        : undefined
+                    }
+                    onAccess={requestAccess}
                     onRename={openRename}
                     onDelete={openDelete}
                   />
@@ -374,7 +382,7 @@ export function AdminResourceInventory() {
             ))}
           </ul>
           <div className="hidden overflow-x-auto rounded-2xl border border-border bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.05)] md:block">
-            <table className="w-full min-w-[72rem] border-collapse text-left">
+            <table className="w-full min-w-[80rem] border-collapse text-left">
               <colgroup>
                 <col />
                 <col />
@@ -382,7 +390,7 @@ export function AdminResourceInventory() {
                 <col className="w-24" />
                 <col className="w-28" />
                 <col className="w-40" />
-                <col className="w-48" />
+                <col className="w-72" />
               </colgroup>
               <thead>
                 <tr className="border-b border-strong-border text-xs font-bold tracking-[0.1em] text-muted-foreground">
@@ -402,12 +410,9 @@ export function AdminResourceInventory() {
                     className="align-top hover:bg-primary-soft"
                   >
                     <td className="px-5 py-5">
-                      <a
-                        href={resource.downloadUrl}
-                        className="break-all font-semibold text-primary hover:underline"
-                      >
+                      <p className="break-all font-semibold">
                         {resource.filename}
-                      </a>
+                      </p>
                     </td>
                     <td className="px-5 py-5 text-sm">
                       <p>
@@ -417,7 +422,8 @@ export function AdminResourceInventory() {
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {resource.categoryId
-                          ? repositoryCategoryById.get(resource.categoryId)?.title ?? resource.categoryId
+                          ? (repositoryCategoryById.get(resource.categoryId)
+                              ?.title ?? resource.categoryId)
                           : "No category"}
                       </p>
                     </td>
@@ -428,14 +434,32 @@ export function AdminResourceInventory() {
                       {formatResourceFileType(resource.fileType)}
                     </td>
                     <td className="whitespace-nowrap px-5 py-5 text-sm">
-                      {formatFileSize(resource.fileSize)}
+                      {formatResourceFileSize(resource.fileSize)}
                     </td>
                     <td className="whitespace-nowrap px-5 py-5 text-sm">
-                      {formatDate(resource.uploadedAt)}
+                      {formatResourceDate(resource.uploadedAt)}
                     </td>
                     <td className="whitespace-nowrap px-5 py-5">
-                      <ResourceActions
+                      <AdminResourceActions
                         resource={resource}
+                        accessDisabled={accessMutation.isPending}
+                        accessPendingMode={
+                          accessMutation.isPending &&
+                          accessMutation.variables?.resource.key ===
+                            resource.key
+                            ? accessMutation.variables.mode
+                            : undefined
+                        }
+                        accessError={
+                          accessMutation.isError &&
+                          accessMutation.variables?.resource.key ===
+                            resource.key
+                            ? accessMutation.error instanceof Error
+                              ? accessMutation.error.message
+                              : "The file could not be accessed."
+                            : undefined
+                        }
+                        onAccess={requestAccess}
                         onRename={openRename}
                         onDelete={openDelete}
                       />
@@ -480,108 +504,52 @@ export function AdminResourceInventory() {
           </nav>
         </>
       ) : null}
+      {previewTarget ? (
+        <AdminResourcePreviewDialog
+          target={previewTarget}
+          onClose={() => setPreviewTarget(null)}
+        />
+      ) : null}
       {renameTarget ? (
-        <AppDialog
-          title="Rename resource"
-          description="Enter the complete file name. Keep the file type at the end unchanged."
+        <AdminResourceRenameDialog
+          target={renameTarget}
+          error={
+            renameMutation.isError
+              ? renameMutation.error instanceof Error
+                ? renameMutation.error.message
+                : "The resource could not be renamed."
+              : undefined
+          }
+          isPending={renameMutation.isPending}
+          onChange={(value) => setRenameTarget({ ...renameTarget, value })}
           onClose={() => setRenameTarget(null)}
-        >
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (renameTarget.value !== renameTarget.original)
-                renameMutation.mutate({
-                  key: renameTarget.key,
-                  filename: renameTarget.value,
-                });
-            }}
-            className="p-5 sm:p-6"
-          >
-            <label className="text-sm font-semibold">
-              Filename
-              <input
-                autoFocus
-                required
-                value={renameTarget.value}
-                onChange={(event) =>
-                  setRenameTarget({
-                    ...renameTarget,
-                    value: event.target.value,
-                  })
-                }
-                className="mt-2 min-h-12 w-full border border-strong-border px-4 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-            </label>
-            {renameMutation.isError ? (
-              <p className="mt-3 text-sm text-danger" role="alert">
-                {renameMutation.error instanceof Error
-                  ? renameMutation.error.message
-                  : "The resource could not be renamed."}
-              </p>
-            ) : null}
-            <div className="mt-6 grid gap-3 min-[24rem]:flex min-[24rem]:justify-end">
-              <button
-                type="button"
-                onClick={() => setRenameTarget(null)}
-                className="min-h-11 cursor-pointer border border-strong-border px-5 font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                disabled={
-                  renameMutation.isPending ||
-                  !renameTarget.value.trim() ||
-                  renameTarget.value === renameTarget.original
-                }
-                className="min-h-11 cursor-pointer bg-primary px-5 font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {renameMutation.isPending ? "Renaming..." : "Rename resource"}
-              </button>
-            </div>
-          </form>
-        </AppDialog>
+          onSubmit={() =>
+            renameMutation.mutate({
+              key: renameTarget.key,
+              filename: renameTarget.value,
+            })
+          }
+        />
       ) : null}
       {deleteTarget ? (
-        <AppDialog
-          title="Delete resource"
-          description="This permanently deletes the file from the public repository."
+        <AdminResourceDeleteDialog
+          target={deleteTarget}
+          error={
+            deleteMutation.isError
+              ? deleteMutation.error instanceof Error
+                ? deleteMutation.error.message
+                : "The resource could not be deleted."
+              : undefined
+          }
+          isPending={deleteMutation.isPending}
           onClose={() => setDeleteTarget(null)}
-        >
-          <div className="p-5 sm:p-6">
-            <p className="text-sm leading-6 text-muted-foreground">
-              Are you sure you want to delete this file?
-            </p>
-            <p className="mt-3 break-all border-l-2 border-danger bg-danger-soft px-4 py-3 text-sm font-semibold text-foreground">
-              {deleteTarget.filename}
-            </p>
-            {deleteMutation.isError ? (
-              <p className="mt-3 text-sm text-danger" role="alert">
-                {deleteMutation.error instanceof Error
-                  ? deleteMutation.error.message
-                  : "The resource could not be deleted."}
-              </p>
-            ) : null}
-            <div className="mt-6 grid gap-3 min-[24rem]:flex min-[24rem]:justify-end">
-              <button
-                type="button"
-                onClick={() => setDeleteTarget(null)}
-                className="min-h-11 cursor-pointer border border-strong-border px-5 font-semibold"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => deleteMutation.mutate({ key: deleteTarget.key, confirmation: deleteTarget.filename })}
-                disabled={deleteMutation.isPending}
-                className="min-h-11 cursor-pointer bg-danger px-5 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {deleteMutation.isPending
-                  ? "Deleting..."
-                  : "Delete permanently"}
-              </button>
-            </div>
-          </div>
-        </AppDialog>
+          onConfirm={() =>
+            deleteMutation.mutate({
+              key: deleteTarget.key,
+              confirmation: deleteTarget.filename,
+            })
+          }
+        />
       ) : null}
     </div>
   );

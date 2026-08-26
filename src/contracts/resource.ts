@@ -83,9 +83,9 @@ export const resourceFilenameSchema = z
     },
   );
 
-export const resourceSchema = z
+const resourceMetadataSchema = z
   .object({
-    key: resourceObjectKeySchema,
+    id: z.string().regex(/^[A-Za-z0-9_-]{43}$/u),
     filename: resourceFilenameSchema,
     displayName: z.string().min(1).max(200),
     sectionId: repositorySectionIdSchema,
@@ -100,8 +100,6 @@ export const resourceSchema = z
     mimeType: z.string().min(1).max(120),
     fileSize: z.number().int().nonnegative(),
     uploadedAt: z.iso.datetime({ offset: true }),
-    downloadUrl: z.url(),
-    previewUrl: z.url().optional(),
   })
   .superRefine((resource, context) => {
     const extension = resource.filename.split(".").pop()?.toLowerCase();
@@ -128,6 +126,11 @@ export const resourceSchema = z
     }
   });
 
+export const publicResourceSchema = resourceMetadataSchema;
+export const adminResourceSchema = resourceMetadataSchema.safeExtend({
+  key: resourceObjectKeySchema,
+});
+
 export const resourceQuerySchema = z.object({
   q: z.string().trim().max(100).optional(),
   section: repositorySectionIdSchema.optional(),
@@ -139,12 +142,19 @@ export const resourceQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
-export const resourceListResponseSchema = z.object({
-  data: z.array(resourceSchema),
-  meta: z.object({
-    total: z.number().int().nonnegative(),
-    nextCursor: z.string().nullable(),
-  }),
+const resourceListMetaSchema = z.object({
+  total: z.number().int().nonnegative(),
+  nextCursor: z.string().nullable(),
+});
+
+export const publicResourceListResponseSchema = z.object({
+  data: z.array(publicResourceSchema),
+  meta: resourceListMetaSchema,
+});
+
+export const adminResourceListResponseSchema = z.object({
+  data: z.array(adminResourceSchema),
+  meta: resourceListMetaSchema,
 });
 
 export const apiErrorResponseSchema = z.object({
@@ -161,7 +171,13 @@ export type RepositorySectionId = z.infer<typeof repositorySectionIdSchema>;
 export type ResourceFileType = z.infer<typeof resourceFileTypeSchema>;
 export type ResourceFileExtension = keyof typeof resourceFileDefinitions;
 export type ResourceSort = z.infer<typeof resourceSortSchema>;
-export type Resource = z.infer<typeof resourceSchema>;
+export type PublicResource = z.infer<typeof publicResourceSchema>;
+export type AdminResource = z.infer<typeof adminResourceSchema>;
 export type ResourceQuery = z.infer<typeof resourceQuerySchema>;
-export type ResourceListResponse = z.infer<typeof resourceListResponseSchema>;
+export type PublicResourceListResponse = z.infer<
+  typeof publicResourceListResponseSchema
+>;
+export type AdminResourceListResponse = z.infer<
+  typeof adminResourceListResponseSchema
+>;
 export type ApiErrorResponse = z.infer<typeof apiErrorResponseSchema>;

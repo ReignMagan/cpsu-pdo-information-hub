@@ -33,7 +33,10 @@ type FormInput = z.input<typeof formSchema>;
 type FormValues = z.output<typeof formSchema>;
 
 const currentDate = new Date();
-const currentSchoolYearStart = currentDate.getMonth() >= 5 ? currentDate.getFullYear() : currentDate.getFullYear() - 1;
+const currentSchoolYearStart =
+  currentDate.getMonth() >= 5
+    ? currentDate.getFullYear()
+    : currentDate.getFullYear() - 1;
 const schoolYearOptions = Array.from({ length: 12 }, (_, index) => {
   const start = currentSchoolYearStart + 1 - index;
   return `${start}-${start + 1}`;
@@ -66,7 +69,7 @@ export function ResourceUploadForm() {
     mutationFn: async (values: FormValues) => {
       if (!user) throw new Error("Please sign in before uploading a file.");
       return uploadResource(user, values.file, {
-        sectionId: values.sectionId as never,
+        sectionId: values.sectionId,
         categoryId: values.categoryId || undefined,
         year: values.year,
       });
@@ -114,7 +117,12 @@ export function ResourceUploadForm() {
           ) : null}
         </label>
         <label>
-          <span className="block text-sm font-semibold">Category <span className="font-normal text-muted-foreground">(optional)</span></span>
+          <span className="block text-sm font-semibold">
+            Category{" "}
+            <span className="font-normal text-muted-foreground">
+              (optional)
+            </span>
+          </span>
           <select
             {...register("categoryId")}
             disabled={!selectedSection}
@@ -127,7 +135,9 @@ export function ResourceUploadForm() {
               </option>
             ))}
           </select>
-          <span className="mt-2 block text-sm text-muted-foreground">Choose a category only when the file belongs to one.</span>
+          <span className="mt-2 block text-sm text-muted-foreground">
+            Choose a category only when the file belongs to one.
+          </span>
         </label>
       </div>
       <label className="block">
@@ -136,7 +146,11 @@ export function ResourceUploadForm() {
           {...register("year")}
           className="mt-2 min-h-12 w-full cursor-pointer border border-strong-border bg-surface px-4 sm:max-w-xs"
         >
-          {schoolYearOptions.map((schoolYear) => <option key={schoolYear} value={schoolYear}>{schoolYear}</option>)}
+          {schoolYearOptions.map((schoolYear) => (
+            <option key={schoolYear} value={schoolYear}>
+              {schoolYear}
+            </option>
+          ))}
         </select>
         {errors.year ? (
           <span className="mt-2 block text-sm text-danger">
@@ -187,7 +201,8 @@ export function ResourceUploadForm() {
           id="resource-file-help"
           className="mt-2 block text-sm text-muted-foreground"
         >
-          PDF documents and JPG, PNG, or WebP images are accepted. Maximum 25 MB.
+          PDF documents and JPG, PNG, or WebP images are accepted. Maximum 25
+          MB.
         </span>
         {errors.file ? (
           <span className="mt-2 block text-sm text-danger">

@@ -15,6 +15,14 @@ export const resourceUploadFileExtensions = [
   "webp",
 ] as const;
 
+export const resourceUploadFileDefinitions = {
+  pdf: { mimeType: "application/pdf" },
+  jpg: { mimeType: "image/jpeg" },
+  jpeg: { mimeType: "image/jpeg" },
+  png: { mimeType: "image/png" },
+  webp: { mimeType: "image/webp" },
+} as const;
+
 export const resourceUploadMimeTypes = [
   "application/pdf",
   "image/jpeg",
@@ -27,7 +35,10 @@ export const resourceUploadMimeTypeSchema = z.enum(resourceUploadMimeTypes);
 export const resourceUploadRequestSchema = z.object({
   filename: resourceFilenameSchema,
   sectionId: repositorySectionIdSchema,
-  categoryId: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u).optional(),
+  categoryId: z
+    .string()
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u)
+    .optional(),
   year: resourceYearSchema,
   mimeType: resourceUploadMimeTypeSchema,
   fileSize: z.number().int().positive().max(maximumResourceFileSize),
@@ -46,6 +57,8 @@ export const resourceUploadAuthorizationSchema = z.object({
 });
 
 export type ResourceUploadRequest = z.infer<typeof resourceUploadRequestSchema>;
+export type ResourceUploadFileExtension =
+  keyof typeof resourceUploadFileDefinitions;
 export type ResourceUploadAuthorization = z.infer<
   typeof resourceUploadAuthorizationSchema
 >["data"];

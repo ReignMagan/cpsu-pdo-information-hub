@@ -1,17 +1,17 @@
 import type { User } from "firebase/auth";
 import {
-  apiErrorResponseSchema,
-  resourceListResponseSchema,
-  type ResourceListResponse,
+  adminResourceListResponseSchema,
+  type AdminResourceListResponse,
   type ResourceQuery,
 } from "../contracts/resource";
+import { parseApiError, readJsonResponse } from "./apiResponse";
 import { RepositoryApiError } from "./resources";
 
 export async function getAdminResources(
   user: User,
   query: Partial<ResourceQuery> = {},
   signal?: AbortSignal,
-): Promise<ResourceListResponse> {
+): Promise<AdminResourceListResponse> {
   const searchParams = new URLSearchParams();
   Object.entries(query).forEach(([key, value]) => {
     if (value !== undefined && value !== "")
@@ -30,18 +30,15 @@ export async function getAdminResources(
       signal,
     },
   );
-  const payload: unknown = await response.json();
+  const payload = await readJsonResponse(response);
 
   if (!response.ok) {
-    const error = apiErrorResponseSchema.safeParse(payload);
-    throw new RepositoryApiError(
-      error.success
-        ? error.data.error.message
-        : "The administrator resource request failed.",
-      error.success ? error.data.error.code : "UNKNOWN_ERROR",
-      response.status,
+    const error = parseApiError(
+      payload,
+      "The administrator resource request failed.",
     );
+    throw new RepositoryApiError(error.message, error.code, response.status);
   }
 
-  return resourceListResponseSchema.parse(payload);
+  return adminResourceListResponseSchema.parse(payload);
 }

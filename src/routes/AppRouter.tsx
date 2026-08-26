@@ -1,6 +1,8 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { PublicLayout } from "../layouts/PublicLayout";
+import { AboutPage } from "../pages/AboutPage";
+import { ContactPage } from "../pages/ContactPage";
 import { HomePage } from "../pages/HomePage";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { RepositoryPage } from "../pages/RepositoryPage";
@@ -18,6 +20,8 @@ export function AppRouter() {
         <Route element={<PublicLayout />}>
           <Route index element={<HomePage />} />
           <Route path="repository" element={<RepositoryPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         <Route

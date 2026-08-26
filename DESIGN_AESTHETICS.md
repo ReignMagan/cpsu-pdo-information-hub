@@ -925,8 +925,7 @@ Its design should prioritize:
 Finding resources
 Understanding categories
 Reading metadata
-Previewing files
-Downloading files
+Understanding how to request or access a resource
 ```
 
 Do not optimize for visual spectacle.
@@ -1015,7 +1014,7 @@ Example:
 │ Annual Financial Performance Report                          │
 │ Financial Performance · 2026                                 │
 │                                                              │
-│ 3.4 MB       Uploaded Aug 2026            Preview   Download │
+│ 3.4 MB       Uploaded Aug 2026            Public metadata only │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -1035,8 +1034,7 @@ Year
 File size
 Upload date
 Relevant metadata
-Preview action
-Download action
+Clear public availability note
 ```
 
 Information hierarchy matters more than decoration.
@@ -1749,9 +1747,10 @@ Do not add decorative illustrations.
 
 ---
 
-# 73. PDF Preview
+# 73. Administrator PDF Preview
 
-PDF preview pages should resemble a document-reading workspace.
+PDF preview is available only inside the authenticated administrator
+interface. It should resemble a document-reading workspace.
 
 Possible layout:
 
@@ -1769,15 +1768,16 @@ Avoid surrounding the PDF with unnecessary cards.
 
 ---
 
-# 74. Image Preview
+# 74. Administrator Image Preview
 
-Image previews should use:
+Image preview is available only inside the authenticated administrator
+interface and should use:
 
 ```text
 Neutral canvas
 Centered image
 Resource metadata
-Download action
+Staff download action
 ```
 
 The image itself should remain the focus.
@@ -1786,9 +1786,9 @@ The image itself should remain the focus.
 
 # 75. Legacy File Handling
 
-Legacy non-previewable files should use the standard resource row with a
-generic file label and download action. Do not add a dedicated icon, metric,
-filter, preview prompt, or simulated file preview for a legacy format.
+Public legacy-file rows should remain metadata-only. In the authenticated
+administrator interface, non-previewable files may use the standard resource
+row with a staff download action. Do not add a simulated preview.
 
 ---
 
@@ -1893,7 +1893,7 @@ Public website:
 Editorial
 Institutional
 Document-oriented
-Open
+Metadata-only
 Readable
 ```
 
@@ -1940,8 +1940,7 @@ Annual Financial Performance Report
 Financial Performance
 2026 · 3.4 MB
 
-Preview
-Download
+Public metadata only
 ```
 
 Do not compress desktop columns until they become unreadable.
@@ -2565,7 +2564,7 @@ Pagination/loading mechanism
 
 ---
 
-## Resource Detail Page
+## Administrator Resource Detail Page
 
 ```text
 Breadcrumb
@@ -2573,7 +2572,7 @@ File type
 Resource title
 Institutional metadata
 Preview
-Download
+Staff download
 Related resources if available
 ```
 

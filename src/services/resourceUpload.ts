@@ -1,11 +1,11 @@
 import type { User } from "firebase/auth";
-import { apiErrorResponseSchema } from "../contracts/resource";
 import {
   resourceUploadAuthorizationSchema,
   type ResourceUploadRequest,
 } from "../contracts/resourceUpload";
 import { resourceUploadCompletionResponseSchema } from "../contracts/resourceUpload";
 import { RepositoryApiError } from "./resources";
+import { parseApiError, readJsonResponse } from "./apiResponse";
 
 export async function uploadResource(
   user: User,
@@ -29,12 +29,15 @@ export async function uploadResource(
       }),
     },
   );
-  const payload: unknown = await authorizationResponse.json();
+  const payload = await readJsonResponse(authorizationResponse);
   if (!authorizationResponse.ok) {
-    const error = apiErrorResponseSchema.safeParse(payload);
+    const error = parseApiError(
+      payload,
+      "The file could not be prepared for upload.",
+    );
     throw new RepositoryApiError(
-      error.success ? error.data.error.message : "The file could not be prepared for upload.",
-      error.success ? error.data.error.code : "UNKNOWN_ERROR",
+      error.message,
+      error.code,
       authorizationResponse.status,
     );
   }
@@ -74,12 +77,15 @@ export async function uploadResource(
       }),
     },
   );
-  const completionPayload: unknown = await completionResponse.json();
+  const completionPayload = await readJsonResponse(completionResponse);
   if (!completionResponse.ok) {
-    const error = apiErrorResponseSchema.safeParse(completionPayload);
+    const error = parseApiError(
+      completionPayload,
+      "The upload could not be completed.",
+    );
     throw new RepositoryApiError(
-      error.success ? error.data.error.message : "The upload could not be completed.",
-      error.success ? error.data.error.code : "UNKNOWN_ERROR",
+      error.message,
+      error.code,
       completionResponse.status,
     );
   }

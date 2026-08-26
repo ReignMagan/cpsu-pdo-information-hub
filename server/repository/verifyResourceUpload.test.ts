@@ -3,7 +3,7 @@ import type { ResourceUploadCompletionRequest } from '../../src/contracts/resour
 import type { R2Config } from '../config/r2'
 import { ResourceUploadVerificationError, verifyResourceUpload } from './verifyResourceUpload'
 
-const config: R2Config = { accountId: 'account', accessKeyId: 'key', secretAccessKey: 'secret', bucketName: 'bucket', endpoint: 'https://account.r2.cloudflarestorage.com', publicBaseUrl: 'https://resources.example.edu' }
+const config: R2Config = { accountId: 'account', accessKeyId: 'key', secretAccessKey: 'secret', bucketName: 'bucket', endpoint: 'https://account.r2.cloudflarestorage.com' }
 const input: ResourceUploadCompletionRequest = { key: 'statistical-profile/student-population/2026/student-population-2026-test.pdf', mimeType: 'application/pdf', fileSize: 2048 }
 
 describe('verifyResourceUpload', () => {

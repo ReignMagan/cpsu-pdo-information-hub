@@ -16,7 +16,7 @@ export function HomePage() {
           <div className="max-w-[43rem]">
             <h1
               id="home-title"
-              className="max-w-[21rem] break-words font-serif text-[2.35rem] leading-[1.04] tracking-[-0.04em] text-foreground min-[23rem]:text-[2.5rem] sm:max-w-none sm:text-6xl sm:leading-[0.98] lg:text-[4.75rem]"
+              className="max-w-[21rem] break-words font-serif text-[2.35rem] leading-[1.04] tracking-[-0.04em] text-foreground min-[23rem]:text-[2.5rem] sm:max-w-none sm:text-6xl sm:leading-[0.98] lg:text-[3.4rem]"
             >
               Planning and Development Office Information Hub
             </h1>

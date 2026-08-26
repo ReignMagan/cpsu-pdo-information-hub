@@ -31,7 +31,7 @@ Planning and Development Office
 
 ## Primary Purpose
 
-The application provides a centralized repository where authorized Planning and Development Office personnel can securely manage institutional resources while public visitors can browse, preview, search, filter, and download publicly available files.
+The application provides a centralized repository where authorized Planning and Development Office personnel can securely manage institutional resources while public visitors can browse, search, and filter publicly available resource metadata.
 
 The repository primarily supports:
 
@@ -106,6 +106,10 @@ Repository object metadata where necessary
 
 Cloudflare R2 is the primary live file repository.
 
+The repository and audit buckets must remain private. Disable each bucket's
+`r2.dev` URL and remove any public custom domain. Public repository responses
+must never expose permanent object URLs.
+
 ---
 
 ## Vercel
@@ -132,7 +136,7 @@ React is responsible for:
 Public website
 Repository browser
 Search and filtering UI
-File previews
+Administrator file previews
 Administrator interface
 Authentication interface
 Client-side state
@@ -219,9 +223,9 @@ Upload
 Replace
 Rename where supported
 Delete
-Download
-Image preview
-PDF preview
+Administrator file access
+Administrator image preview
+Administrator PDF preview
 Repository organization
 Security
 Accessibility
@@ -282,10 +286,8 @@ Browse categories
 Search resources
 Filter resources
 Sort resources
-Preview supported resources
-View images
-Open PDFs
-Download files
+View public resource metadata
+Preview supported PDF and image resources in public view mode
 Access public institutional information
 ```
 
@@ -293,6 +295,7 @@ Guests must NOT be able to:
 
 ```text
 Upload
+Download repository files through the public interface
 Delete
 Replace
 Rename
@@ -319,11 +322,12 @@ Upload resources
 Choose repository categories
 Choose resource year
 Upload PDF files
-Upload XLSX files
 Upload supported images
 Replace resources
 Rename resources when supported
 Delete resources
+Preview supported PDF and image resources
+Download original repository files
 Review repository content
 ```
 
@@ -716,9 +720,9 @@ Authenticated request
 
 ---
 
-# 17. Allowed File Types
+# 17. Repository and Upload File Types
 
-Version 1 accepts:
+The Version 1 repository may contain:
 
 ```text
 .pdf
@@ -728,6 +732,19 @@ Version 1 accepts:
 .png
 .webp
 ```
+
+New uploads accept only:
+
+```text
+.pdf
+.jpg
+.jpeg
+.png
+.webp
+```
+
+XLSX files already present in the repository remain supported for metadata and
+authenticated staff download, but Version 1 does not accept new XLSX uploads.
 
 Optional future types include:
 
@@ -1039,7 +1056,7 @@ Do not create separate unrelated data structures for PDFs, Excel files, and imag
 A resource may conceptually contain:
 
 ```text
-key
+id
 filename
 displayName
 category
@@ -1049,9 +1066,13 @@ fileType
 mimeType
 fileSize
 uploadDate
-downloadUrl
-previewUrl
 ```
+
+The authenticated administrator resource shape may additionally contain the
+validated R2 object `key`. The public resource shape must not contain the key
+or any durable preview or download URL. Short-lived public preview URLs and
+administrator access URLs belong to separate access responses and are never
+durable resource metadata.
 
 Only include fields supported by the actual architecture.
 
@@ -1152,15 +1173,34 @@ Sorting logic should be deterministic.
 
 # 33. File Preview Rules
 
-## Images
+## Public PDF and image preview
 
-Supported image files may be displayed directly inside the application.
+Public guests may preview supported PDF and image resources in view mode. The
+browser sends only the opaque public resource ID to a public preview endpoint.
+The server resolves that ID to a validated object key and issues an inline,
+short-lived signed GET URL. Public resource metadata must never expose the R2
+key, a permanent URL, or a durable signed URL.
+
+The public interface must not provide a download button or a download-mode
+endpoint. View mode is not digital-rights management: any file delivered to a
+browser can potentially be saved by a technically capable visitor.
+
+## Public Excel access
+
+Version 1 does not include a browser spreadsheet viewer. XLSX resources remain
+visible as public metadata but do not receive public preview or download
+actions.
+
+## Administrator images
+
+Authenticated administrators may display supported images using a short-lived,
+server-authorized GET URL.
 
 ---
 
-## PDFs
+## Administrator PDFs
 
-Use either:
+Authenticated administrators may use either:
 
 ```text
 Browser PDF viewer
@@ -1170,17 +1210,18 @@ or
 Embedded browser-compatible PDF preview
 ```
 
-Do not add a heavy PDF rendering dependency unless necessary.
+The URL must be issued by a protected server API and expire quickly. Do not add
+a heavy PDF rendering dependency unless necessary.
 
 ---
 
-## Excel
+## Administrator Excel access
 
 Version 1 should provide:
 
 ```text
 File information
-Download button
+Authenticated staff download button
 ```
 
 Full browser spreadsheet preview is not required.
@@ -1788,15 +1829,23 @@ The final behavior must be explicit.
 
 ---
 
-# 60. Download Behavior
+# 60. Original File Access
 
-Public files should remain easy to download.
+The public resource API exposes metadata without R2 object keys or durable file
+URLs. A separate public preview endpoint may accept an opaque resource ID,
+resolve it to a validated object key on the server, and issue a short-lived,
+inline signed GET URL for supported PDF and image files. The public interface
+must not provide download buttons or a download-mode endpoint.
 
-Downloads must preserve useful filenames where possible.
+Repository originals must remain in a private R2 bucket. Authenticated
+administrators may preview supported PDF and image files or download originals
+through a protected server endpoint that independently verifies the Firebase ID
+token, validates the exact object key, and issues a short-lived signed GET URL.
 
-Do not require authentication for resources intended to be public.
-
-Protected/private resources should not be introduced without an explicit access-control requirement.
+Signed URLs are bearer credentials. Use the R2 S3 API domain, expire them after
+60 seconds, return preview authorization responses with `private, no-store`,
+and never log or store signed URLs as resource metadata. Record administrator
+file access in the immutable audit log.
 
 ---
 
@@ -1983,7 +2032,7 @@ Navigation
 Authentication
 Protected routes
 Upload
-Download
+Authenticated administrator download
 Delete
 Search
 Filters
@@ -2090,7 +2139,8 @@ Resource cards/table
 Resource details
 File icons
 File size formatting
-Downloads
+Public metadata isolation
+Authenticated administrator file access
 ```
 
 ---
@@ -2196,7 +2246,7 @@ Test:
 Authentication
 Authorization
 Uploads
-Downloads
+Authenticated administrator downloads
 Deletes
 Search
 Filters
@@ -2508,8 +2558,8 @@ File requirements
 Replacing files
 Renaming
 Deleting
-Previewing
-Downloading
+Administrator previewing
+Administrator downloading
 Troubleshooting
 Backup responsibilities
 ```

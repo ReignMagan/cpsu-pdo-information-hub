@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { Resource } from "../../contracts/resource";
+import type { PublicResource } from "../../contracts/resource";
 import { groupResourcesByCategory } from "./groupResourcesByCategory";
 
-const resource = (overrides: Partial<Resource> = {}): Resource => ({
-  key: "statistical-profile/student-population/2026/Original Report FINAL.pdf",
+const resource = (
+  overrides: Partial<PublicResource> = {},
+): PublicResource => ({
+  id: "A".repeat(43),
   filename: "Original Report FINAL.pdf",
   displayName: "Original report final",
   sectionId: "statistical-profile",
@@ -13,8 +15,6 @@ const resource = (overrides: Partial<Resource> = {}): Resource => ({
   mimeType: "application/pdf",
   fileSize: 2_048,
   uploadedAt: "2026-08-12T06:02:16.467Z",
-  downloadUrl: "https://example.com/Original%20Report%20FINAL.pdf",
-  previewUrl: "https://example.com/Original%20Report%20FINAL.pdf",
   ...overrides,
 });
 
@@ -33,14 +33,12 @@ describe("groupResourcesByCategory", () => {
   it("keeps resources in the same category together and orders categories institutionally", () => {
     const groups = groupResourcesByCategory([
       resource({
-        key: "higher-education-performance/accreditation/2026/accreditation.pdf",
         filename: "accreditation.pdf",
         sectionId: "higher-education-performance",
         categoryId: "accreditation",
       }),
       resource(),
       resource({
-        key: "statistical-profile/student-population/2025/student-population-2025.pdf",
         filename: "student-population-2025.pdf",
         year: 2025,
       }),
@@ -56,7 +54,6 @@ describe("groupResourcesByCategory", () => {
   it("groups files without a category directly under their section", () => {
     const groups = groupResourcesByCategory([
       resource({
-        key: "statistical-profile/2025-2026/Office Report.pdf",
         filename: "Office Report.pdf",
         categoryId: undefined,
         year: "2025-2026",
@@ -72,12 +69,10 @@ describe("groupResourcesByCategory", () => {
   it("places uncategorized files first, followed by configured category order", () => {
     const groups = groupResourcesByCategory([
       resource({
-        key: "statistical-profile/human-resources/2026/personnel.pdf",
         filename: "personnel.pdf",
         categoryId: "human-resources",
       }),
       resource({
-        key: "statistical-profile/2026/section-report.pdf",
         filename: "section-report.pdf",
         categoryId: undefined,
       }),

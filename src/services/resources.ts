@@ -1,9 +1,9 @@
 import {
-  apiErrorResponseSchema,
-  resourceListResponseSchema,
-  type ResourceListResponse,
+  publicResourceListResponseSchema,
+  type PublicResourceListResponse,
   type ResourceQuery,
 } from "../contracts/resource";
+import { parseApiError, readJsonResponse } from "./apiResponse";
 
 export class RepositoryApiError extends Error {
   readonly code: string;
@@ -20,7 +20,7 @@ export class RepositoryApiError extends Error {
 export async function getResources(
   query: Partial<ResourceQuery> = {},
   signal?: AbortSignal,
-): Promise<ResourceListResponse> {
+): Promise<PublicResourceListResponse> {
   const searchParams = new URLSearchParams();
 
   Object.entries(query).forEach(([key, value]) => {
@@ -36,18 +36,12 @@ export async function getResources(
       signal,
     },
   );
-  const payload: unknown = await response.json();
+  const payload = await readJsonResponse(response);
 
   if (!response.ok) {
-    const error = apiErrorResponseSchema.safeParse(payload);
-    throw new RepositoryApiError(
-      error.success
-        ? error.data.error.message
-        : "The repository request failed.",
-      error.success ? error.data.error.code : "UNKNOWN_ERROR",
-      response.status,
-    );
+    const error = parseApiError(payload, "The repository request failed.");
+    throw new RepositoryApiError(error.message, error.code, response.status);
   }
 
-  return resourceListResponseSchema.parse(payload);
+  return publicResourceListResponseSchema.parse(payload);
 }

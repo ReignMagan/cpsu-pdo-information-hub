@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 import { resourceQuerySchema } from '../../src/contracts/resource'
 import type { R2Config } from '../config/r2'
-import { InvalidResourceCursorError, listResources } from './listResources'
+import {
+  InvalidResourceCursorError,
+  listAdminResources,
+  listResources,
+} from './listResources'
 
 const testConfig: R2Config = {
   accountId: 'test-account',
@@ -9,7 +13,6 @@ const testConfig: R2Config = {
   secretAccessKey: 'test-secret-key',
   bucketName: 'repository-bucket',
   endpoint: 'https://test-account.r2.cloudflarestorage.com',
-  publicBaseUrl: 'https://resources.example.edu',
 }
 
 const objects = [
@@ -31,25 +34,35 @@ const objects = [
 ]
 
 describe('listResources', () => {
-  it('maps valid R2 objects, skips malformed keys, and encodes public URLs', async () => {
+  it('returns public metadata without storage keys or file URLs', async () => {
     const result = await listResources(resourceQuerySchema.parse({}), {
       config: testConfig,
       listObjects: async () => ({ Contents: objects, IsTruncated: false }),
     })
 
     expect(result.meta).toEqual({ total: 2, nextCursor: null })
+    expect(result.data[0]).toMatchObject({
+      fileType: 'xlsx',
+      fileSize: 2048,
+      filename: 'student population 2026.xlsx',
+    })
+    for (const resource of result.data) {
+      expect(resource).not.toHaveProperty('key')
+      expect(resource).not.toHaveProperty('downloadUrl')
+      expect(resource).not.toHaveProperty('previewUrl')
+    }
+  })
+
+  it('retains storage keys in the authenticated administrator inventory', async () => {
+    const result = await listAdminResources(resourceQuerySchema.parse({}), {
+      config: testConfig,
+      listObjects: async () => ({ Contents: objects, IsTruncated: false }),
+    })
+
     expect(result.data.map((resource) => resource.key)).toEqual([
       'statistical-profile/student-population/2026/student population 2026.xlsx',
       'higher-education-performance/accreditation/undergraduate/2025/accreditation-report-2025.pdf',
     ])
-    expect(result.data[0]).toMatchObject({
-      fileType: 'xlsx',
-      fileSize: 2048,
-      previewUrl: undefined,
-      downloadUrl:
-        'https://resources.example.edu/statistical-profile/student-population/2026/student%20population%202026.xlsx',
-    })
-    expect(result.data[1]?.previewUrl).toBe(result.data[1]?.downloadUrl)
   })
 
   it('uses the narrowest available prefix and applies resource filters', async () => {

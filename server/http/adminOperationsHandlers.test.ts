@@ -13,7 +13,6 @@ const config: R2Config = {
   secretAccessKey: 'secret',
   bucketName: 'repository',
   endpoint: 'https://account.r2.cloudflarestorage.com',
-  publicBaseUrl: 'https://resources.example.edu',
 }
 
 function renameRequest() {

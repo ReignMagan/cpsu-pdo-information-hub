@@ -1,5 +1,6 @@
 import type { User } from "firebase/auth";
 import { adminSessionSchema } from "../contracts/adminSession";
+import { readJsonResponse } from "./apiResponse";
 
 export class AdminSessionRequestError extends Error {
   constructor() {
@@ -16,7 +17,7 @@ export async function fetchAdminSession(user: User) {
 
   if (!response.ok) throw new AdminSessionRequestError();
 
-  const result = adminSessionSchema.safeParse(await response.json());
+  const result = adminSessionSchema.safeParse(await readJsonResponse(response));
   if (!result.success) throw new AdminSessionRequestError();
   return result.data.data;
 }

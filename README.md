@@ -41,16 +41,15 @@ R2_SECRET_ACCESS_KEY=
 R2_BUCKET_NAME=
 R2_AUDIT_BUCKET_NAME=
 R2_ENDPOINT=
-R2_PUBLIC_BASE_URL=
 ```
 
-Create an R2 API token with **Object Read & Write** permission and scope it only to the repository bucket and a separate private audit bucket. `R2_AUDIT_BUCKET_NAME` must refer to that private bucket. Do not enable an `r2.dev` URL or public custom domain for the audit bucket. The default S3-compatible endpoint is:
+Create an R2 API token with **Object Read & Write** permission and scope it only to the repository bucket and a separate private audit bucket. Both buckets are private: disable the repository bucket's `r2.dev` URL, remove any public custom domain, and do the same for the audit bucket. `R2_AUDIT_BUCKET_NAME` must refer to the separate audit bucket. The default S3-compatible endpoint is:
 
 ```text
 https://<R2_ACCOUNT_ID>.r2.cloudflarestorage.com
 ```
 
-`R2_ENDPOINT` is optional and should be used for jurisdiction-specific endpoints when required. Production R2 URLs must use HTTPS. Plain HTTP is accepted only for a local development endpoint. `R2_PUBLIC_BASE_URL` should use a Cloudflare custom domain in production. An `r2.dev` URL is suitable only for development.
+`R2_ENDPOINT` is optional and should be used for jurisdiction-specific endpoints when required. Production R2 API endpoints must use HTTPS. Plain HTTP is accepted only for a local development endpoint. There is deliberately no public repository URL environment variable.
 
 These values are server-only. Never rename them with a `VITE_` prefix, commit `.env` files, or expose the R2 secret key to browser code.
 
@@ -74,10 +73,11 @@ Supported extensions are `.pdf`, `.xlsx`, `.jpg`, `.jpeg`, `.png`, and `.webp`.
 ## Architecture boundary
 
 ```text
-React client -> GET /api/resources -> Vercel server API -> Cloudflare R2
+Public client -> GET /api/resources -> metadata-only response
+Admin client  -> authenticated Vercel API -> private Cloudflare R2 originals
 ```
 
-The browser never communicates with the authenticated R2 S3 API and never receives R2 credentials. Public resource URLs are derived only from the configured public bucket domain.
+The public resource API returns catalog metadata without R2 object keys, durable file URLs, or credentials. A separate public preview endpoint resolves an opaque resource ID server-side and issues a 60-second inline URL for supported PDFs and images. The public interface does not provide downloads. Authenticated administrator APIs verify the Firebase ID token before listing storage keys or issuing download access to an original file.
 
 ## Firebase administrator authentication
 
@@ -92,7 +92,7 @@ VITE_FIREBASE_APP_ID=
 
 Restart the development server after changing environment variables, then open `/admin/login`. Administrator accounts are provisioned in Firebase Console; the public application does not provide registration.
 
-Client-side route protection improves the interface but is not the authorization boundary for repository mutations. Every future protected server API must independently verify the Firebase ID token before accessing Cloudflare R2.
+Client-side route protection improves the interface but is not the authorization boundary for repository mutations. Every protected server API must independently verify the Firebase ID token before accessing Cloudflare R2.
 
 ## Firebase Admin token verification
 
@@ -117,20 +117,24 @@ The configured UID is the secure bootstrap account. Additional accounts created 
 
 Authenticated administrators can open `/admin/resources` to review the live repository inventory. The page requests `GET /api/admin/resources` with the current Firebase ID token. The server verifies the token before reading Cloudflare R2, then applies the same validated search, section, file-type, sorting, and pagination contract used by the public repository.
 
-This inventory is intentionally read-only. Upload, replacement, rename, and deletion remain unavailable until their separately authenticated server APIs and validation rules are implemented.
+The inventory includes each private R2 object key only after administrator authentication. Opening or downloading an original uses the protected `POST /api/admin/resource-access` endpoint. The server validates the requested key and returns a signed GET URL that expires after 60 seconds; it also writes an immutable access audit event.
 
 ## Administrator uploads
 
-`/admin/resources/upload` accepts one PDF, JPG, PNG, or WebP file up to 25 MB. Excel resources already present in the repository remain available for browsing and download, but new XLSX uploads are rejected. The protected server validates the Firebase identity and upload metadata, derives a safe `section/category/year/filename` key, rejects duplicates, and returns a five-minute presigned PUT URL. The browser uploads directly to R2 without receiving R2 credentials.
+`/admin/resources/upload` accepts one PDF, JPG, PNG, or WebP file up to 25 MB. Excel resources already present in the repository remain visible as public metadata and available for authenticated staff download, but new XLSX uploads are rejected. The protected server validates the Firebase identity and upload metadata, derives a safe `section/category/year/filename` key, rejects duplicates, and returns a five-minute presigned PUT URL. The browser uploads directly to R2 without receiving R2 credentials.
 
-The R2 API token must have **Object Read & Write** access to the repository and private audit buckets. Configure the public repository bucket CORS policy to allow `PUT` from the exact local and production application origins and to allow the `Content-Type` and `If-None-Match` headers. Do not use a wildcard production origin. Upload authorizations sign `If-None-Match: *`, so R2 rejects a concurrent upload instead of silently overwriting an existing key.
+The R2 API token must have **Object Read & Write** access to the repository and private audit buckets. Keep both buckets private. Configure the repository bucket CORS policy to allow `GET` and `PUT` from only the exact local and production application origins. Allow the request headers used by uploads, including `Content-Type` and `If-None-Match`, and expose only the response headers the interface needs. Do not use a wildcard production origin. Upload authorizations sign `If-None-Match: *`, so R2 rejects a concurrent upload instead of silently overwriting an existing key.
 
 After the direct PUT succeeds, the client calls the protected upload-completion endpoint. The server reads the actual R2 object properties and verifies its key, content length, content type, and upload timestamp before the UI reports success.
 
-Public resource rows provide native browser PDF previews and direct image previews. Legacy non-previewable resources remain available through a generic file row and download action, without a dedicated visualization or preview prompt.
+Public resource rows provide a view action for PDFs and images without exposing an R2 key or permanent object URL. Public download controls are not provided. Excel files remain public metadata because Version 1 has no browser spreadsheet viewer; authenticated staff can download the original from the administrator inventory.
+
+Public view mode is not digital-rights management. A browser must receive file bytes to display a PDF or image, so a technically capable visitor may still save content even though the application exposes no download action.
 
 ## Deployment security
 
 `vercel.json` applies a Content Security Policy, clickjacking protection, MIME-sniffing protection, a strict referrer policy, a restricted permissions policy, and HSTS. Verify these response headers after every production deployment. HTTPS is mandatory for both the application and its configured R2 endpoints.
+
+Cloudflare presigned URLs work on the R2 S3 API domain, not a public custom domain. Treat each signed URL as a temporary bearer credential: never log it, cache it, or place it in public metadata. The 60-second lifetime intentionally limits exposure. Before deployment, manually confirm that the repository and audit buckets have no enabled `r2.dev` URL or public custom domain.
 
 Administrator mutations write immutable JSON audit events to the private audit bucket using create-only R2 writes. These records include the administrator UID, action, target, timestamp, and non-sensitive action details. They never include passwords, Firebase tokens, or R2 credentials.

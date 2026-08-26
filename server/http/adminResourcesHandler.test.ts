@@ -15,7 +15,6 @@ const testConfig: R2Config = {
   secretAccessKey: 'test-secret-key',
   bucketName: 'repository-bucket',
   endpoint: 'https://test-account.r2.cloudflarestorage.com',
-  publicBaseUrl: 'https://resources.example.edu',
 }
 
 describe('handleAdminResourcesRequest', () => {
@@ -41,6 +40,34 @@ describe('handleAdminResourcesRequest', () => {
       data: [],
       meta: { total: 0, nextCursor: null },
     })
+  })
+
+  it('returns the storage key only after administrator authentication', async () => {
+    const response = await handleAdminResourcesRequest(
+      new Request('http://localhost/api/admin/resources', {
+        headers: { authorization: 'Bearer valid-token' },
+      }),
+      {
+        verifyIdToken: async () => verifiedAdministrator,
+        resources: {
+          config: testConfig,
+          listObjects: async () => ({
+            Contents: [{
+              Key: 'planning-documents/planning-documents/2026/Annual Report.pdf',
+              Size: 4096,
+              LastModified: new Date('2026-08-12T08:00:00.000Z'),
+            }],
+            IsTruncated: false,
+          }),
+        },
+      },
+    )
+    const body = await response.json() as { data: { key: string }[] }
+
+    expect(response.status).toBe(200)
+    expect(body.data[0]?.key).toBe(
+      'planning-documents/planning-documents/2026/Annual Report.pdf',
+    )
   })
 
   it('does not access R2 when authentication is missing', async () => {
@@ -91,6 +118,8 @@ describe('handleAdminResourcesRequest', () => {
     )
 
     expect(response.status).toBe(400)
-    await expect(response.json()).resolves.toMatchObject({ error: { code: 'INVALID_QUERY' } })
+    await expect(response.json()).resolves.toMatchObject({
+      error: { code: 'INVALID_QUERY' },
+    })
   })
 })
