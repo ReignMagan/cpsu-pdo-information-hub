@@ -73,11 +73,10 @@ export function AdminRepositoryStructurePage() {
         id="structure-title"
         className="mt-2 font-serif text-3xl tracking-tight sm:text-4xl"
       >
-        Sections and categories
+        Repository structure
       </h1>
       <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">
-        These names organize the public repository and the upload form. Renaming
-        changes the visible title; existing file paths remain stable.
+        Add, rename, or remove sections and categories.
       </p>
       <form
         className="mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4 shadow-[0_10px_28px_rgba(20,83,45,0.05)] sm:flex-row sm:p-5"
@@ -91,7 +90,7 @@ export function AdminRepositoryStructurePage() {
         }}
       >
         <label className="flex-1">
-          <span className="text-sm font-semibold">New repository section</span>
+          <span className="text-sm font-semibold">New section</span>
           <input
             value={sectionTitle}
             onChange={(event) => setSectionTitle(event.target.value)}
@@ -231,8 +230,7 @@ export function AdminRepositoryStructurePage() {
               </ul>
             ) : (
               <p className="px-5 py-5 text-sm text-muted-foreground">
-                No categories yet. Add one before uploading files to this
-                section.
+                No categories.
               </p>
             )}
           </article>
@@ -245,7 +243,7 @@ export function AdminRepositoryStructurePage() {
               ? "Add category"
               : `Edit ${editor.kind === "rename-section" ? "section" : "category"}`
           }
-        description="Use a short, clear name that visitors will easily understand."
+        description="Enter a clear name."
           onClose={() => setEditor(null)}
         >
           <form
@@ -290,13 +288,10 @@ export function AdminRepositoryStructurePage() {
       {pendingDelete ? (
         <AppDialog
           title={`Delete ${pendingDelete.kind}`}
-          description={`You are about to delete “${pendingDelete.title}”. This succeeds only when it contains no files${pendingDelete.kind === "section" ? " or categories" : ""}.`}
+          description={`Delete “${pendingDelete.title}”? It must be empty.`}
           onClose={() => setPendingDelete(null)}
         >
           <div className="p-5 sm:p-6">
-            <p className="text-sm leading-6 text-muted-foreground">
-              This action removes the repository label and cannot be undone.
-            </p>
             <div className="mt-6 grid gap-3 min-[24rem]:flex min-[24rem]:justify-end">
               <button
                 type="button"

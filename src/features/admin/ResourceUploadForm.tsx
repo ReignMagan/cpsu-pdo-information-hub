@@ -92,7 +92,7 @@ export function ResourceUploadForm() {
       <div className="grid gap-6 sm:grid-cols-2">
         <label>
           <span className="block text-sm font-semibold">
-            Repository section
+            Section
           </span>
           <select
             {...register("sectionId", {
@@ -128,20 +128,17 @@ export function ResourceUploadForm() {
             disabled={!selectedSection}
             className="mt-2 min-h-12 w-full cursor-pointer border border-strong-border bg-surface px-3 disabled:cursor-not-allowed disabled:bg-surface-secondary"
           >
-            <option value="">No category — place directly in section</option>
+            <option value="">No category</option>
             {selectedSection?.categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.title}
               </option>
             ))}
           </select>
-          <span className="mt-2 block text-sm text-muted-foreground">
-            Choose a category only when the file belongs to one.
-          </span>
         </label>
       </div>
       <label className="block">
-        <span className="block text-sm font-semibold">School year</span>
+        <span className="block text-sm font-semibold">Year</span>
         <select
           {...register("year")}
           className="mt-2 min-h-12 w-full cursor-pointer border border-strong-border bg-surface px-4 sm:max-w-xs"
@@ -201,8 +198,7 @@ export function ResourceUploadForm() {
           id="resource-file-help"
           className="mt-2 block text-sm text-muted-foreground"
         >
-          PDF documents and JPG, PNG, or WebP images are accepted. Maximum 25
-          MB.
+          PDF, JPG, PNG, or WebP · 25 MB max.
         </span>
         {errors.file ? (
           <span className="mt-2 block text-sm text-danger">
@@ -228,7 +224,7 @@ export function ResourceUploadForm() {
           <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           <span>
             <span className="break-all font-medium">{uploadedFilename}</span>{" "}
-            was uploaded successfully.
+            uploaded.
           </span>
         </p>
       ) : null}
@@ -238,7 +234,7 @@ export function ResourceUploadForm() {
         className="inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 bg-primary px-6 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-55 min-[24rem]:w-auto"
       >
         <Upload className="size-4" aria-hidden="true" />
-        {mutation.isPending ? "Uploading…" : "Upload resource"}
+        {mutation.isPending ? "Uploading…" : "Upload file"}
       </button>
     </form>
   );

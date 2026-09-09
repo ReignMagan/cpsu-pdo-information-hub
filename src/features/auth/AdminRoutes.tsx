@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { AdminLayout } from "../../layouts/AdminLayout";
 import { AdminHomePage } from "../../pages/admin/AdminHomePage";
+import { AdminAccomplishResourcePage } from "../../pages/admin/AdminAccomplishResourcePage";
 import { AdminLoginPage } from "../../pages/admin/AdminLoginPage";
 import { AdminResourcesPage } from "../../pages/admin/AdminResourcesPage";
 import { AdminResourceUploadPage } from "../../pages/admin/AdminResourceUploadPage";
@@ -22,6 +23,10 @@ export function AdminRoutes() {
             <Route
               path="resources/upload"
               element={<AdminResourceUploadPage />}
+            />
+            <Route
+              path="accomplish-resource"
+              element={<AdminAccomplishResourcePage />}
             />
             <Route
               path="structure"

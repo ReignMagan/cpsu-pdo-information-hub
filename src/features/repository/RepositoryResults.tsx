@@ -81,7 +81,7 @@ export function RepositoryResults() {
             className="mx-auto size-7 animate-spin text-primary motion-reduce:animate-none"
             aria-hidden="true"
           />
-          <p className="mt-4 font-medium">Loading repository resources…</p>
+          <p className="mt-4 font-medium">Loading resources…</p>
         </div>
       ) : null}
 
@@ -90,10 +90,9 @@ export function RepositoryResults() {
           className="mt-5 rounded-2xl border border-border bg-surface px-6 py-9 text-center shadow-[0_10px_28px_rgba(20,83,45,0.05)] sm:px-8"
           role="alert"
         >
-          <h2 className="font-serif text-2xl">Repository unavailable</h2>
+          <h2 className="font-serif text-2xl">Resources unavailable</h2>
           <p className="mx-auto mt-3 max-w-xl leading-7 text-muted-foreground">
-            We could not load repository resources. Please check your connection
-            and try again.
+            Check your connection and try again.
           </p>
           <button
             type="button"
@@ -113,10 +112,9 @@ export function RepositoryResults() {
             strokeWidth={1.5}
             aria-hidden="true"
           />
-          <h2 className="mt-3 font-serif text-2xl">No matching resources</h2>
+          <h2 className="mt-3 font-serif text-2xl">No results</h2>
           <p className="mx-auto mt-3 max-w-xl leading-7 text-muted-foreground">
-            Try a different filename, section, or file type, or clear the
-            current filters.
+            Change your search or clear the filters.
           </p>
         </div>
       ) : null}
@@ -129,11 +127,8 @@ export function RepositoryResults() {
                 id="resource-groups-title"
                 className="font-serif text-2xl tracking-tight"
               >
-                Resources by category
+                Browse by category
               </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Browse files grouped by category.
-              </p>
             </div>
             <p className="text-sm text-muted-foreground">
               {resourcesQuery.data.meta.total}{" "}

@@ -52,10 +52,10 @@ export function AdminHomePage() {
             id="admin-home-title"
             className="font-serif text-3xl tracking-tight sm:text-5xl"
           >
-            Manage the repository
+            Repository overview
           </h1>
           <p className="mt-3 text-muted-foreground">
-            Publish files, organize repository records, and manage staff access.
+            Manage files, structure, and staff.
           </p>
         </div>
         <Link
@@ -63,7 +63,7 @@ export function AdminHomePage() {
           className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-[0_10px_24px_rgba(20,83,45,0.16)] min-[24rem]:w-auto"
         >
           <Upload className="size-4" />
-          Upload a resource
+          Upload file
         </Link>
       </div>
       <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 xl:grid-cols-4">
@@ -81,7 +81,7 @@ export function AdminHomePage() {
       <div className="mt-8 grid gap-6 xl:grid-cols-[1.5fr_0.8fr]">
         <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_12px_32px_rgba(20,83,45,0.06)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-strong-border p-4 sm:p-5">
-            <h2 className="font-serif text-2xl">Recent resources</h2>
+            <h2 className="font-serif text-2xl">Recent uploads</h2>
             <Link
               to="/admin/resources"
               className="text-sm font-semibold text-primary underline"
@@ -103,7 +103,7 @@ export function AdminHomePage() {
           </ul>
           {resources.isSuccess && !data.length ? (
             <p className="p-6 text-muted-foreground">
-              No resources have been published yet.
+              No resources yet.
             </p>
           ) : null}
         </section>
@@ -114,13 +114,13 @@ export function AdminHomePage() {
           </p>
           <h2 className="mt-2 font-serif text-2xl">Staff access</h2>
           <p className="mt-3 leading-7 text-muted-foreground">
-            People who can publish files and maintain the repository.
+            Authorized repository managers.
           </p>
           <Link
             to="/admin/users"
             className="mt-6 inline-flex min-h-11 items-center border border-primary px-4 text-sm font-semibold text-primary"
           >
-            Manage staff access
+            Manage staff
           </Link>
         </section>
       </div>

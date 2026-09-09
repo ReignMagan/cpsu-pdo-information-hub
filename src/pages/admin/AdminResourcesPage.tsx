@@ -7,10 +7,10 @@ export function AdminResourcesPage() {
         id="admin-resources-title"
         className="font-serif text-3xl tracking-tight sm:text-4xl"
       >
-        Repository files
+        Manage files
       </h1>
       <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
-        Review, rename, or remove files in the repository.
+        Search, preview, rename, or delete resources.
       </p>
       <AdminResourceInventory />
     </section>

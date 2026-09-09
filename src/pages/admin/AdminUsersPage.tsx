@@ -78,7 +78,7 @@ export function AdminUsersPage() {
             Staff access
           </h1>
           <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">
-            Add and manage the people who are allowed to update this repository.
+            Add, pause, or remove staff access.
           </p>
         </div>
         <button
@@ -86,7 +86,7 @@ export function AdminUsersPage() {
           className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 bg-primary px-5 text-sm font-semibold text-primary-foreground min-[24rem]:w-auto"
         >
           <Plus className="size-4" />
-          Add staff member
+          Add staff
         </button>
       </div>
       {showForm ? (
@@ -149,7 +149,7 @@ export function AdminUsersPage() {
       {users.isPending ? (
         <p className="mt-10 flex items-center gap-2">
           <LoaderCircle className="size-5 animate-spin" />
-          Loading staff accounts...
+          Loading staff...
         </p>
       ) : null}
       {users.isSuccess ? (
@@ -287,13 +287,12 @@ export function AdminUsersPage() {
       {deleteTarget ? (
         <AppDialog
           title="Remove staff access"
-          description={`Remove ${deleteTarget.email} from the list of people who can manage the repository.`}
+          description={`Remove ${deleteTarget.email}?`}
           onClose={() => setDeleteTarget(null)}
         >
           <div className="p-5 sm:p-6">
             <p className="text-sm leading-6 text-muted-foreground">
-              The account will no longer be able to sign in. Repository files
-              previously uploaded by this account are not deleted.
+              This removes sign-in access. Existing files stay.
             </p>
             {remove.isError ? (
               <p className="mt-3 text-sm text-danger" role="alert">

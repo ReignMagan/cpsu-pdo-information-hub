@@ -35,7 +35,7 @@ export function AdminLayout() {
                   CPSU PLANNING AND DEVELOPMENT OFFICE
                 </span>
                 <span className="mt-0.5 block truncate text-[0.68rem] text-muted-foreground sm:text-sm">
-                  Repository Management
+                  Admin
                 </span>
               </span>
             </Link>
@@ -57,9 +57,10 @@ export function AdminLayout() {
             {[
               ["/admin", "Overview"],
               ["/admin/resources", "Resources"],
-              ["/admin/resources/upload", "Upload resource"],
-              ["/admin/structure", "Sections & categories"],
-              ["/admin/users", "Staff access"],
+              ["/admin/resources/upload", "Upload"],
+              ["/admin/accomplish-resource", "Accomplishments"],
+              ["/admin/structure", "Structure"],
+              ["/admin/users", "Staff"],
             ].map(([to, label]) => (
               <NavLink
                 key={to}
@@ -81,7 +82,7 @@ export function AdminLayout() {
       >
         <div className="rounded-2xl border border-primary/15 bg-primary-soft px-4 py-3 shadow-[0_8px_22px_rgba(20,83,45,0.04)]">
           <p className="text-xs font-bold tracking-[0.14em] text-primary">
-            SIGNED IN AS
+            SIGNED IN
           </p>
           <p className="mt-1 break-all text-sm text-muted-foreground">
             {user?.email}

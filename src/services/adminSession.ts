@@ -1,11 +1,20 @@
 import type { User } from "firebase/auth";
 import { adminSessionSchema } from "../contracts/adminSession";
-import { readJsonResponse } from "./apiResponse";
+import { parseApiError, readJsonResponse } from "./apiResponse";
 
 export class AdminSessionRequestError extends Error {
-  constructor() {
-    super("Your sign-in could not be confirmed. Please sign in again.");
+  readonly code: string;
+  readonly status?: number;
+
+  constructor(
+    message = "Your administrator access could not be verified.",
+    code = "UNKNOWN_ERROR",
+    status?: number,
+  ) {
+    super(message);
     this.name = "AdminSessionRequestError";
+    this.code = code;
+    this.status = status;
   }
 }
 
@@ -15,9 +24,16 @@ export async function fetchAdminSession(user: User) {
     headers: { authorization: `Bearer ${idToken}` },
   });
 
-  if (!response.ok) throw new AdminSessionRequestError();
+  const payload = await readJsonResponse(response);
+  if (!response.ok) {
+    const error = parseApiError(
+      payload,
+      "Your administrator access could not be verified.",
+    );
+    throw new AdminSessionRequestError(error.message, error.code, response.status);
+  }
 
-  const result = adminSessionSchema.safeParse(await readJsonResponse(response));
+  const result = adminSessionSchema.safeParse(payload);
   if (!result.success) throw new AdminSessionRequestError();
   return result.data.data;
 }

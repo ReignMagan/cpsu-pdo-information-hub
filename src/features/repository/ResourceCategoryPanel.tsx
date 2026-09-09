@@ -1,11 +1,14 @@
-import { Eye, File, FileImage, FileText, LoaderCircle } from "lucide-react";
+import {
+  ChevronRight,
+  Eye,
+  File,
+  FileImage,
+  FileText,
+  LoaderCircle,
+} from "lucide-react";
 import { useState } from "react";
 import type { PublicResource } from "../../contracts/resource";
 import { authorizePublicResourcePreview } from "../../services/publicResourcePreview";
-import {
-  formatResourceDate,
-  formatResourceFileSize,
-} from "../../utils/formatResourceMetadata";
 import type { ResourceCategoryGroup } from "./groupResourcesByCategory";
 import { PublicResourcePreviewDialog } from "./PublicResourcePreviewDialog";
 
@@ -14,14 +17,15 @@ type ResourceCategoryPanelProps = {
 };
 
 const fileTypeDetails = {
-  pdf: { icon: FileText, label: "PDF" },
-  xlsx: { icon: File, label: "File" },
-  image: { icon: FileImage, label: "IMG" },
+  pdf: { icon: FileText },
+  xlsx: { icon: File },
+  image: { icon: FileImage },
 } as const;
 
 type ResourceRowProps = {
   resource: PublicResource;
   isPending: boolean;
+  isWide: boolean;
   error?: string;
   onPreview: (resource: PublicResource) => void;
 };
@@ -29,6 +33,7 @@ type ResourceRowProps = {
 function ResourceRow({
   resource,
   isPending,
+  isWide,
   error,
   onPreview,
 }: ResourceRowProps) {
@@ -36,74 +41,70 @@ function ResourceRow({
   const FileIcon = details.icon;
 
   return (
-    <li className="py-4 sm:py-5">
-      <div className="flex gap-3 sm:gap-4">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-primary-soft text-primary">
-          <FileIcon className="size-5" strokeWidth={1.6} aria-hidden="true" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-muted-foreground">
-            File name
-          </p>
-          <p className="mt-1 break-words text-sm font-semibold leading-6 text-foreground [overflow-wrap:anywhere]">
-            {resource.filename}
-          </p>
-          <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
-            <div className="flex gap-1">
-              <dt className="sr-only">Year</dt>
-              <dd>{resource.year}</dd>
-            </div>
-            <div className="flex gap-1">
-              <dt className="sr-only">File type</dt>
-              <dd>{details.label}</dd>
-            </div>
-            <div className="flex gap-1">
-              <dt className="sr-only">File size</dt>
-              <dd>{formatResourceFileSize(resource.fileSize)}</dd>
-            </div>
-            <div className="flex gap-1">
-              <dt className="sr-only">Uploaded</dt>
-              <dd>Uploaded {formatResourceDate(resource.uploadedAt)}</dd>
-            </div>
-          </dl>
-          {resource.fileType === "xlsx" ? (
-            <p className="mt-4 text-xs leading-5 text-muted-foreground">
-              Online preview is not available for spreadsheet files. Public
-              downloads are disabled.
+    <li className={isWide ? "md:col-span-2" : undefined}>
+      {resource.fileType === "xlsx" ? (
+        <div className="flex min-h-32 flex-col justify-between rounded-2xl border border-border bg-surface-secondary/55 p-5 text-muted-foreground">
+          <div className="flex w-full items-start gap-3">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-primary">
+              <FileIcon
+                className="size-5"
+                strokeWidth={1.6}
+                aria-hidden="true"
+              />
+            </span>
+            <p className="min-w-0 break-words pt-1 text-sm font-semibold leading-6 text-foreground [overflow-wrap:anywhere]">
+              {resource.filename}
             </p>
-          ) : (
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={() => onPreview(resource)}
-                disabled={isPending}
-                className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-primary px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
-              >
-                {isPending ? (
-                  <LoaderCircle
-                    className="size-4 animate-spin motion-reduce:animate-none"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <Eye className="size-4" aria-hidden="true" />
-                )}
-                {isPending ? "Opening..." : "View file"}
-              </button>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                Public view mode is available. Download is restricted.
-              </p>
-              {error ? (
-                <p
-                  className="mt-2 text-xs font-medium text-destructive"
-                  role="alert"
-                >
-                  {error}
-                </p>
-              ) : null}
-            </div>
-          )}
+          </div>
+          <p className="mt-5 text-xs font-medium">Staff access only</p>
         </div>
-      </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => onPreview(resource)}
+          disabled={isPending}
+          aria-label={`Preview ${resource.filename}`}
+          className="group flex min-h-32 w-full cursor-pointer flex-col justify-between rounded-2xl border border-border bg-surface p-5 text-left shadow-[0_5px_16px_rgba(20,83,45,0.05)] transition-[border-color,background-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary hover:bg-primary-soft/45 hover:shadow-[0_12px_28px_rgba(20,83,45,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
+        >
+          <span className="flex w-full items-start gap-3">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-primary-soft text-primary transition-colors group-hover:border-primary/25 group-hover:bg-surface">
+              <FileIcon
+                className="size-5"
+                strokeWidth={1.6}
+                aria-hidden="true"
+              />
+            </span>
+            <span className="min-w-0 flex-1 break-words pt-1 text-sm font-semibold leading-6 text-foreground [overflow-wrap:anywhere]">
+              {resource.filename}
+            </span>
+            <ChevronRight
+              className="mt-3 size-4 shrink-0 text-primary transition-transform group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
+          </span>
+          <span className="mt-5 flex items-center gap-2 font-semibold text-primary">
+            {isPending ? (
+              <LoaderCircle
+                className="size-4 animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              />
+            ) : (
+              <Eye className="size-4" aria-hidden="true" />
+            )}
+            <span className="text-sm">
+              {isPending ? "Opening..." : "Preview"}
+            </span>
+            <span className="text-xs font-medium text-muted-foreground group-hover:text-primary">
+              Click to open
+            </span>
+          </span>
+        </button>
+      )}
+      {error ? (
+        <p className="mt-2 text-xs font-medium text-destructive" role="alert">
+          {error}
+        </p>
+      ) : null}
     </li>
   );
 }
@@ -158,13 +159,17 @@ export function ResourceCategoryPanel({ group }: ResourceCategoryPanelProps) {
             </p>
           </div>
         ) : null}
-        <div className="overflow-hidden rounded-2xl border border-border border-t-4 border-t-primary bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.06)]">
-          <ul className="divide-y divide-strong-border px-4 sm:px-6">
-            {group.resources.map((resource) => (
+        <div>
+          <ul className="grid gap-3 md:grid-cols-2">
+            {group.resources.map((resource, index) => (
               <ResourceRow
                 key={resource.id}
                 resource={resource}
                 isPending={pendingId === resource.id}
+                isWide={
+                  group.resources.length % 2 === 1 &&
+                  index === group.resources.length - 1
+                }
                 error={
                   previewError?.id === resource.id
                     ? previewError.message

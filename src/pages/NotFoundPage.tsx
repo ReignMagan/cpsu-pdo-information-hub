@@ -16,13 +16,13 @@ export function NotFoundPage() {
         Page not found
       </h1>
       <p className="mt-5 max-w-xl leading-7 text-muted-foreground">
-        This section has not been published or the address may be incorrect.
+        Check the address or return home.
       </p>
       <Link
         className="mt-8 inline-flex border-b border-primary pb-1 font-semibold text-primary"
         to="/"
       >
-        Return to the Information Hub
+        Return home
       </Link>
     </section>
   );

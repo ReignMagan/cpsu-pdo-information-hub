@@ -183,7 +183,7 @@ export function AdminResourceInventory() {
               resetPage();
             }}
             type="search"
-            placeholder="File name, category, or school year"
+            placeholder="File, category, or year"
             className="mt-2 min-h-11 w-full border border-strong-border bg-surface pl-10 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </label>
@@ -261,7 +261,7 @@ export function AdminResourceInventory() {
             className="mx-auto size-7 animate-spin text-primary motion-reduce:animate-none"
             aria-hidden="true"
           />
-          <p className="mt-4 font-medium">Loading repository files…</p>
+          <p className="mt-4 font-medium">Loading files…</p>
         </div>
       ) : null}
       {resourcesQuery.isError ? (
@@ -270,12 +270,10 @@ export function AdminResourceInventory() {
           role="alert"
         >
           <h2 className="text-xl font-semibold">
-            Repository files are unavailable
+            Files unavailable
           </h2>
           <p className="mx-auto mt-3 max-w-xl leading-7 text-muted-foreground">
-            The repository files could not be loaded. Please check your
-            connection and try again. If the problem continues, contact the
-            person responsible for maintaining this website.
+            Check your connection and try again.
           </p>
           <button
             type="button"
@@ -294,17 +292,17 @@ export function AdminResourceInventory() {
             strokeWidth={1.5}
             aria-hidden="true"
           />
-          <h2 className="mt-5 text-xl font-semibold">No matching resources</h2>
+          <h2 className="mt-5 text-xl font-semibold">No results</h2>
           <p className="mx-auto mt-3 max-w-xl leading-7 text-muted-foreground">
-            No repository files match the current search and filters.
+            Change your search or filters.
           </p>
         </div>
       ) : null}
       {resourcesQuery.isSuccess && resourcesQuery.data.data.length > 0 ? (
         <>
           <div className="flex flex-col gap-2 border-b border-border py-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>{resourcesQuery.data.meta.total} matching resources</p>
-            <p>Showing up to 25 per page</p>
+            <p>{resourcesQuery.data.meta.total} results</p>
+            <p>25 per page</p>
           </div>
           <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.05)] md:hidden">
             {resourcesQuery.data.data.map((resource) => (

@@ -1,126 +1,91 @@
 import { ArrowRight, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
-import { HomeHeroBackground } from "../components/illustrations/HomeHeroBackground";
 import { useRepositoryStructureQuery } from "../features/repository/useRepositoryStructureQuery";
 
 export function HomePage() {
   const structure = useRepositoryStructureQuery();
+
   return (
-    <>
-      <section
-        className="relative isolate overflow-hidden border-b border-border bg-[#fcfdfb]"
-        aria-labelledby="home-title"
-      >
-        <HomeHeroBackground />
-        <div className="relative z-10 mx-auto flex min-h-[29rem] max-w-content items-center px-5 py-10 text-left sm:min-h-[34rem] sm:px-8 sm:py-16 lg:min-h-[38rem] lg:px-10">
-          <div className="max-w-[43rem]">
-            <h1
-              id="home-title"
-              className="max-w-[21rem] break-words font-serif text-[2.35rem] leading-[1.04] tracking-[-0.04em] text-foreground min-[23rem]:text-[2.5rem] sm:max-w-none sm:text-6xl sm:leading-[0.98] lg:text-[3.4rem]"
-            >
-              Planning and Development Office Information Hub
-            </h1>
-            <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:mt-7 sm:text-lg sm:leading-8">
-              A central access point for institutional reports, statistical
-              profiles, planning documents, and performance records.
-            </p>
-            <div className="mt-7 flex flex-col items-start justify-start gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-5">
-              <Link
-                to="/repository"
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-[0_10px_24px_rgba(20,83,45,0.18)] transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-primary min-[23rem]:w-auto"
-              >
-                Browse Repository
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-              <Link
-                to="/about"
-                className="inline-flex items-center gap-2 border-b border-primary pb-1 text-sm font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
-              >
-                Learn about the office
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-            </div>
+    <section className="border-b border-border bg-[#fcfdfb]" aria-labelledby="home-title">
+      <div className="mx-auto grid max-w-content gap-10 px-5 py-10 sm:px-8 sm:py-14 lg:min-h-[38rem] lg:grid-cols-[minmax(0,0.85fr)_minmax(30rem,1.15fr)] lg:items-center lg:gap-12 lg:px-10 lg:py-16">
+        <div className="max-w-[43rem] text-left">
+          <h1 id="home-title" className="max-w-[21rem] break-words font-serif text-[2.35rem] leading-[1.04] tracking-[-0.04em] text-foreground min-[23rem]:text-[2.5rem] sm:max-w-none sm:text-6xl sm:leading-[0.98] lg:text-[3.4rem]">
+            CPSU Planning Information Hub
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:mt-7 sm:text-lg sm:leading-8">
+            Find planning reports, statistics, and performance records.
+          </p>
+          <div className="mt-7 flex flex-col items-start justify-start gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-5">
+            <Link to="/repository" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-[0_10px_24px_rgba(20,83,45,0.18)] transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-primary min-[23rem]:w-auto">
+              Browse resources
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+            <Link to="/about" className="inline-flex items-center gap-2 border-b border-primary pb-1 text-sm font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+              About the office
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
           </div>
         </div>
-      </section>
 
-      <section className="bg-surface" aria-labelledby="section-directory-title">
-        <div className="mx-auto max-w-content px-5 py-8 sm:px-8 sm:py-12 lg:px-10">
-          <div className="flex items-end gap-6 border-b border-strong-border pb-5">
-            <h2
-              id="section-directory-title"
-              className="text-2xl font-semibold tracking-tight sm:text-3xl"
-            >
-              Explore institutional information
+        <aside className="rounded-2xl border border-border bg-surface p-5 shadow-[0_18px_50px_rgba(20,83,45,0.08)] sm:p-6" aria-labelledby="section-directory-title">
+          <div className="flex items-end gap-5 border-b border-strong-border pb-4">
+            <h2 id="section-directory-title" className="text-xl font-semibold tracking-tight sm:text-2xl">
+              Browse by section
             </h2>
-            <span
-              className="mb-2 hidden h-px flex-1 bg-primary/65 sm:block"
-              aria-hidden="true"
-            />
+            <span className="mb-2 hidden h-px flex-1 bg-primary/65 sm:block" aria-hidden="true" />
           </div>
 
           {structure.isPending ? (
-            <div
-              className="flex min-h-32 items-center justify-center gap-3 border-b border-border text-sm text-muted-foreground"
-              role="status"
-            >
-              <RefreshCw
-                className="size-4 animate-spin motion-reduce:animate-none"
-                aria-hidden="true"
-              />
-              Loading repository sections...
+            <div className="flex min-h-40 items-center justify-center gap-3 text-sm text-muted-foreground" role="status">
+              <RefreshCw className="size-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+              Loading sections...
             </div>
           ) : null}
+
           {structure.isError ? (
-            <div className="border-b border-border py-8">
-              <p className="text-sm text-muted-foreground">
-                Repository sections could not be loaded.
-              </p>
-              <button
-                type="button"
-                onClick={() => structure.refetch()}
-                className="mt-4 inline-flex min-h-10 cursor-pointer items-center gap-2 border border-primary px-4 text-sm font-semibold text-primary hover:bg-primary-soft"
-              >
+            <div className="py-8">
+              <p className="text-sm text-muted-foreground">Sections are unavailable.</p>
+              <button type="button" onClick={() => structure.refetch()} className="mt-4 inline-flex min-h-10 cursor-pointer items-center gap-2 border border-primary px-4 text-sm font-semibold text-primary hover:bg-primary-soft">
                 <RefreshCw className="size-4" aria-hidden="true" />
                 Try again
               </button>
             </div>
           ) : null}
+
           {structure.isSuccess && structure.data.length === 0 ? (
-            <p className="border-b border-border py-8 text-sm text-muted-foreground">
-              No repository sections have been created yet.
-            </p>
+            <p className="py-8 text-sm text-muted-foreground">No sections yet.</p>
           ) : null}
+
           {structure.isSuccess && structure.data.length > 0 ? (
-            <div className="mt-6 grid gap-3 md:grid-cols-2">
-              {structure.data.map((section) => (
-                <Link
-                  key={section.id}
-                  to={`/repository?section=${encodeURIComponent(section.id)}`}
-                  className="group grid grid-cols-[1fr_auto] gap-4 rounded-2xl border border-border bg-surface-secondary/60 px-5 py-6 shadow-[0_8px_24px_rgba(20,83,45,0.04)] transition-colors hover:border-primary/25 hover:bg-primary-soft focus-visible:bg-primary-soft focus-visible:outline-2 focus-visible:outline-primary"
-                >
-                  <span>
-                    <span className="block text-base font-semibold text-foreground group-hover:text-primary">
-                      {section.title}
-                    </span>
-                    <span className="mt-2 block text-sm leading-6 text-muted-foreground">
-                      {section.categories.length > 0
-                        ? section.categories
-                            .map((category) => category.title)
-                            .join(" · ")
-                        : "No categories have been added to this section yet."}
-                    </span>
-                  </span>
-                  <ArrowRight
-                    className="mt-1 size-5 text-primary transition-transform group-hover:translate-x-1"
-                    aria-hidden="true"
-                  />
-                </Link>
-              ))}
-            </div>
+            <ol className="mt-2 divide-y divide-border">
+              {structure.data.map((section, index) => {
+                const categoryCount = section.categories.length;
+
+                return (
+                  <li key={section.id}>
+                    <Link to={`/repository?section=${encodeURIComponent(section.id)}`} className="group grid min-h-16 grid-cols-[2.5rem_minmax(0,1fr)_auto] items-center gap-3 px-2 py-3 hover:bg-primary-soft focus-visible:bg-primary-soft focus-visible:outline-2 focus-visible:outline-primary">
+                      <span className="text-xs font-bold tabular-nums tracking-[0.12em] text-primary" aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span>
+                        <span className="block text-sm font-semibold leading-5 text-foreground group-hover:text-primary sm:text-base">
+                          {section.title}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-muted-foreground">
+                          {categoryCount === 0
+                            ? "No subcategories"
+                            : `${categoryCount} ${categoryCount === 1 ? "category" : "categories"}`}
+                        </span>
+                      </span>
+                      <ArrowRight className="size-4 text-primary transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ol>
           ) : null}
-        </div>
-      </section>
-    </>
+        </aside>
+      </div>
+    </section>
   );
 }

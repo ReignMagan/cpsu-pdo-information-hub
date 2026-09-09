@@ -1,23 +1,24 @@
 import { Archive, FileSearch, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
+import { RepositoryStructureChart } from "../features/repository/RepositoryStructureChart";
 
 const officeFunctions = [
   {
     title: "Institutional information",
     description:
-      "Brings planning documents, statistical profiles, reports, and performance records together in one organized hub.",
+      "Reports, statistics, plans, and performance records.",
     icon: Archive,
   },
   {
     title: "Resource discovery",
     description:
-      "Helps visitors browse and search public resource information by section, category, year, and file type.",
+      "Search by section, category, year, or file type.",
     icon: FileSearch,
   },
   {
     title: "Responsible stewardship",
     description:
-      "Supports secure repository management by authorized Planning and Development Office personnel.",
+      "Authorized staff manage the repository securely.",
     icon: ShieldCheck,
   },
 ] as const;
@@ -47,12 +48,10 @@ export function AboutPage() {
               id="about-title"
               className="mt-2 font-serif text-3xl tracking-tight sm:text-[2.5rem]"
             >
-              Planning information, organized for public access
+              About the Information Hub
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-              The CPSU Planning and Development Office Information Hub is a
-              central access point for institutional resources maintained by the
-              office.
+              Public access to CPSU planning records and reports.
             </p>
           </div>
         </div>
@@ -62,19 +61,12 @@ export function AboutPage() {
         <div className="mx-auto grid max-w-content gap-10 px-5 py-10 sm:px-8 sm:py-14 lg:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)] lg:px-10 lg:py-16">
           <div>
             <h2 className="font-serif text-2xl tracking-tight sm:text-3xl">
-              A dependable institutional reference
+              One reliable source
             </h2>
             <div className="mt-5 space-y-4 text-base leading-7 text-muted-foreground">
               <p>
-                This website provides a clear, centralized way to discover
-                reports, statistical information, planning documents, and
-                performance records associated with Central Philippines State
-                University.
-              </p>
-              <p>
-                Public visitors can browse resource information without an
-                account. Repository files and administrative operations remain
-                protected and are available only to authorized office personnel.
+                Anyone can browse public resource information. Authorized staff
+                manage files and access.
               </p>
             </div>
             <div className="mt-9 grid gap-4 sm:grid-cols-3">
@@ -101,11 +93,10 @@ export function AboutPage() {
               Information Hub
             </p>
             <h2 className="mt-3 text-xl font-semibold tracking-tight">
-              Explore available resources
+              Find a resource
             </h2>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Browse the repository directory to find publicly available
-              metadata for institutional resources.
+              Search the public repository.
             </p>
             <Link
               to="/repository"
@@ -114,6 +105,23 @@ export function AboutPage() {
               Browse repository
             </Link>
           </aside>
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-surface-secondary/45" aria-labelledby="repository-structure-title">
+        <div className="mx-auto max-w-content px-5 py-10 sm:px-8 sm:py-14 lg:px-10 lg:py-16">
+          <div className="max-w-3xl border-l-2 border-primary pl-4 sm:pl-5">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
+              Repository structure
+            </p>
+            <h2 id="repository-structure-title" className="mt-2 font-serif text-2xl tracking-tight sm:text-3xl">
+              Repository sections
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+              Select a section to see its categories.
+            </p>
+          </div>
+          <RepositoryStructureChart />
         </div>
       </section>
     </>

@@ -44,7 +44,7 @@ export function ContactPage() {
       </nav>
       <div className="mt-6 max-w-3xl border-l-2 border-primary pl-4 sm:pl-5">
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
-          Contact the office
+          Contact
         </p>
         <h1
           id="contact-title"
@@ -53,13 +53,11 @@ export function ContactPage() {
           Planning and Development Office
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-          For questions about the Information Hub or its resource listings,
-          contact the office through the verified details published here.
+          Questions about the repository? Contact the office.
         </p>
       </div>
       <div className="mt-9 rounded-xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-950">
-        <strong>Content notice:</strong> The contact details below are
-        placeholders and must be confirmed by the office before publication.
+        <strong>Draft:</strong> Confirm these details before publication.
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {placeholderContactDetails.map(({ label, value, icon: Icon }) => (
@@ -73,8 +71,6 @@ export function ContactPage() {
             <div>
               <h2 className="text-sm font-semibold text-foreground">{label}</h2>
               <p className="mt-1 font-medium text-foreground">{value}</p>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              </p>
             </div>
           </article>
         ))}

@@ -7,6 +7,7 @@ import {
 } from "../http/repositoryStructureHandler.ts";
 import { handleAdminResourceAccessRequest } from "../http/adminResourceAccessHandler.ts";
 import { createDevRequest, writeDevResponse } from "./httpAdapter.ts";
+import { handleAccomplishmentResourceRequest } from "../http/accomplishmentResourceHandler.ts";
 export function adminOperationsApiPlugin(
   environment: NodeJS.ProcessEnv,
 ): Plugin {
@@ -34,6 +35,14 @@ export function adminOperationsApiPlugin(
         }
         if (path === "/api/admin/repository-structure") {
           const apiResponse = await handleAdminRepositoryStructureRequest(
+            await createDevRequest(request),
+            environment,
+          );
+          await writeDevResponse(response, apiResponse);
+          return;
+        }
+        if (path === "/api/admin/accomplishment-resource") {
+          const apiResponse = await handleAccomplishmentResourceRequest(
             await createDevRequest(request),
             environment,
           );

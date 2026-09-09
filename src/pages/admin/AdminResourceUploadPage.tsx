@@ -7,10 +7,10 @@ export function AdminResourceUploadPage() {
         id="upload-title"
         className="font-serif text-3xl tracking-tight sm:text-4xl"
       >
-        Upload resource
+        Upload a file
       </h1>
       <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">
-        Choose a section and school year. You may also choose a category if the file belongs to one.
+        Choose its section, year, and optional category.
       </p>
       <ResourceUploadForm />
     </section>

@@ -22,11 +22,10 @@ export function RepositoryPage() {
           id="repository-title"
           className="font-serif text-3xl tracking-tight sm:text-[2.5rem]"
         >
-          Institutional resources
+          Find a resource
         </h1>
         <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
-          Find reports, planning documents, statistics, and performance records
-          from the Planning and Development Office.
+          Search reports, statistics, plans, and performance records.
         </p>
       </div>
 

@@ -15,7 +15,7 @@ export function PublicResourcePreviewDialog({
   return (
     <AppDialog
       title={resource.displayName}
-      description="Public view mode. A download action is not provided."
+      description="Preview only."
       onClose={onClose}
       size="wide"
     >

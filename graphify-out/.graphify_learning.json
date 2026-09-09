@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-08-17T05:22:06.933098+00:00",
+  "generated_at": "2026-09-07T02:52:24.278793+00:00",
   "nodes": {
     "agents_cloudflare_r2_repository": {
-      "code_fingerprint": "e4e9477054cb7913b1e241249042514fdda26693c6b8d63444681c0a078aeef0",
+      "code_fingerprint": "7db74da8f6d68a0ac14bc3888821a530a45315f86be39727c32c0769dc3e95b9",
       "label": "Cloudflare R2 File Repository",
       "last": "2026-08-17T02:52:30.441887+00:00",
       "provenance": [
@@ -22,16 +22,21 @@
           "q": "please Identify the possible fix in this error since I am possitive my internet connection is fine though"
         }
       ],
-      "score": 2.992478623,
+      "score": 1.846516906,
       "source_file": "AGENTS.md",
       "status": "preferred",
       "uses": 3
     },
     "agents_protected_admin_flow": {
-      "code_fingerprint": "e4e9477054cb7913b1e241249042514fdda26693c6b8d63444681c0a078aeef0",
+      "code_fingerprint": "7db74da8f6d68a0ac14bc3888821a530a45315f86be39727c32c0769dc3e95b9",
       "label": "Protected Administrator Authorization Flow",
-      "last": "2026-08-17T05:16:58.823403+00:00",
+      "last": "2026-08-17T05:28:40.501140+00:00",
       "provenance": [
+        {
+          "date": "2026-08-17T05:28:40.501140+00:00",
+          "outcome": "useful",
+          "q": "in the admin/resources please fix this names it should be one line."
+        },
         {
           "date": "2026-08-17T05:16:58.823403+00:00",
           "outcome": "useful",
@@ -53,13 +58,13 @@
           "q": "please Identify the possible fix in this error since I am possitive my internet connection is fine though"
         }
       ],
-      "score": 3.992396232,
+      "score": 3.080636341,
       "source_file": "AGENTS.md",
       "status": "preferred",
-      "uses": 4
+      "uses": 5
     },
     "agents_react_application": {
-      "code_fingerprint": "e4e9477054cb7913b1e241249042514fdda26693c6b8d63444681c0a078aeef0",
+      "code_fingerprint": "7db74da8f6d68a0ac14bc3888821a530a45315f86be39727c32c0769dc3e95b9",
       "label": "React Application",
       "last": "2026-08-17T05:16:58.823403+00:00",
       "provenance": [
@@ -69,13 +74,13 @@
           "q": "check the whole codebase if everything is working, if there's a problem please list it and what is the possible fix in this system"
         }
       ],
-      "score": 0.999917609,
+      "score": 0.617001825,
       "source_file": "AGENTS.md",
       "status": "tentative",
       "uses": 1
     },
     "agents_vercel_server_apis": {
-      "code_fingerprint": "e4e9477054cb7913b1e241249042514fdda26693c6b8d63444681c0a078aeef0",
+      "code_fingerprint": "7db74da8f6d68a0ac14bc3888821a530a45315f86be39727c32c0769dc3e95b9",
       "label": "Vercel Server APIs",
       "last": "2026-08-17T05:16:58.823403+00:00",
       "provenance": [
@@ -90,13 +95,13 @@
           "q": "please Identify the possible fix in this error since I am possitive my internet connection is fine though"
         }
       ],
-      "score": 1.99730308,
+      "score": 1.232441186,
       "source_file": "AGENTS.md",
       "status": "preferred",
       "uses": 2
     },
     "design_aesthetics_accessible_long_term_interface": {
-      "code_fingerprint": "1f1fb8c89a2172bb5d39eb867cfea54c2b18f1d63938bcb8b73601a20f0ed93f",
+      "code_fingerprint": "3f8bdca1c23819f2e5966138edb354888f1f4e372b0abd4748c083a615530744",
       "label": "Accessible Long-Term Institutional Interface",
       "last": "2026-08-17T03:21:39.630455+00:00",
       "provenance": [
@@ -106,7 +111,7 @@
           "q": "look at the choose file button it's not consistent to others"
         }
       ],
-      "score": 0.998069156,
+      "score": 0.615861232,
       "source_file": "DESIGN_AESTHETICS.md",
       "status": "tentative",
       "uses": 1
@@ -122,7 +127,7 @@
           "q": "look at the choose file button it's not consistent to others"
         }
       ],
-      "score": 0.998069156,
+      "score": 0.615861232,
       "source_file": "package.json",
       "status": "tentative",
       "uses": 1
@@ -138,13 +143,13 @@
           "q": "Remove Excel files from upload so only images and PDF files can be uploaded."
         }
       ],
-      "score": 0.996986045,
+      "score": 0.615192895,
       "source_file": "tsconfig.node.json",
       "status": "tentative",
       "uses": 1
     },
     "server_config_r2_r2config": {
-      "code_fingerprint": "ee22db88db101cd48cdb520b32e70d2ca45115c6e56df571dfefc1d4f0f8c467",
+      "code_fingerprint": "3f97435dad5660631e0cbe9055e48ab247724cab0f0cacd161280b06cbda4a86",
       "label": "R2Config",
       "last": "2026-08-17T02:52:30.441887+00:00",
       "provenance": [
@@ -159,13 +164,13 @@
           "q": "this project not been deployed to vercel yet please let us fix the problem guide me"
         }
       ],
-      "score": 1.995093152,
+      "score": 1.231077544,
       "source_file": "server/config/r2.ts",
       "status": "preferred",
       "uses": 2
     },
     "server_repository_listresources_listresources": {
-      "code_fingerprint": "a866b44e627e0c258568da6083ffdd4f7e0f34991d3949f17fe9924663e7b223",
+      "code_fingerprint": "569e8ff739b9282e531cde3507a713fbd72cc8a9565935b69d4206c0234684fe",
       "label": "listResources()",
       "last": "2026-08-17T02:24:51.746746+00:00",
       "provenance": [
@@ -175,7 +180,7 @@
           "q": "remove the excess excel visualizations in the whole codebase please analyze it"
         }
       ],
-      "score": 0.997160001,
+      "score": 0.615300235,
       "source_file": "server/repository/listResources.ts",
       "status": "tentative",
       "uses": 1
@@ -191,7 +196,7 @@
           "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
         }
       ],
-      "score": 0.996733749,
+      "score": 0.615037215,
       "source_file": "src/App.tsx",
       "status": "tentative",
       "uses": 1
@@ -207,7 +212,7 @@
           "q": "Change the header by moving the contents of the menu dropdown to the header, with no hamburger menu unless it is mobile view."
         }
       ],
-      "score": 0.996861254,
+      "score": 0.615115892,
       "source_file": "src/components/layout/PublicHeader.tsx",
       "status": "tentative",
       "uses": 1
@@ -228,7 +233,7 @@
           "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
         }
       ],
-      "score": 1.993595003,
+      "score": 1.230153108,
       "source_file": "src/components/layout/PublicHeader.tsx",
       "status": "preferred",
       "uses": 2
@@ -244,7 +249,7 @@
           "q": "Change the header by moving the contents of the menu dropdown to the header, with no hamburger menu unless it is mobile view."
         }
       ],
-      "score": 0.996861254,
+      "score": 0.615115892,
       "source_file": "src/config/navigation.ts",
       "status": "tentative",
       "uses": 1
@@ -260,7 +265,7 @@
           "q": "Change the header by moving the contents of the menu dropdown to the header, with no hamburger menu unless it is mobile view."
         }
       ],
-      "score": 0.996861254,
+      "score": 0.615115892,
       "source_file": "src/config/navigation.ts",
       "status": "tentative",
       "uses": 1
@@ -281,7 +286,7 @@
           "q": "I have problem in this the name section files just make it under statistical profile or whatever and make sure to hierarchy in the categories please the no category first and so on whatever the arrangement of the categories please make it like that"
         }
       ],
-      "score": 1.997886205,
+      "score": 1.232801005,
       "source_file": "src/config/repository.ts",
       "status": "preferred",
       "uses": 2
@@ -297,13 +302,13 @@
           "q": "I have problem in this the name section files just make it under statistical profile or whatever and make sure to hierarchy in the categories please the no category first and so on whatever the arrangement of the categories please make it like that"
         }
       ],
-      "score": 0.997968595,
+      "score": 0.61579918,
       "source_file": "src/config/repository.ts",
       "status": "tentative",
       "uses": 1
     },
     "src_contracts_resource": {
-      "code_fingerprint": "95554b7db3c87feb4f5157b00cfb60857bb5da80bac448631f991933a1c48f42",
+      "code_fingerprint": "64c38af08f220e3f96f0c690458a8b41f96cfa31c0f924d7c5a57a43dfcaad74",
       "label": "resource.ts",
       "last": "2026-08-17T02:13:59.335128+00:00",
       "provenance": [
@@ -313,16 +318,21 @@
           "q": "Remove Excel files from upload so only images and PDF files can be uploaded."
         }
       ],
-      "score": 0.996986045,
+      "score": 0.615192895,
       "source_file": "src/contracts/resource.ts",
       "status": "tentative",
       "uses": 1
     },
     "src_contracts_resource_resource": {
-      "code_fingerprint": "95554b7db3c87feb4f5157b00cfb60857bb5da80bac448631f991933a1c48f42",
+      "code_fingerprint": "64c38af08f220e3f96f0c690458a8b41f96cfa31c0f924d7c5a57a43dfcaad74",
       "label": "Resource",
-      "last": "2026-08-17T05:16:58.823403+00:00",
+      "last": "2026-08-17T05:28:40.501140+00:00",
       "provenance": [
+        {
+          "date": "2026-08-17T05:28:40.501140+00:00",
+          "outcome": "useful",
+          "q": "in the admin/resources please fix this names it should be one line."
+        },
         {
           "date": "2026-08-17T05:16:58.823403+00:00",
           "outcome": "useful",
@@ -342,20 +352,15 @@
           "date": "2026-08-17T02:24:51.746746+00:00",
           "outcome": "useful",
           "q": "remove the excess excel visualizations in the whole codebase please analyze it"
-        },
-        {
-          "date": "2026-08-17T02:13:59.335128+00:00",
-          "outcome": "useful",
-          "q": "Remove Excel files from upload so only images and PDF files can be uploaded."
         }
       ],
-      "score": 4.990101408,
+      "score": 3.696272977,
       "source_file": "src/contracts/resource.ts",
       "status": "preferred",
-      "uses": 5
+      "uses": 6
     },
     "src_contracts_resource_resourcefiledefinitions": {
-      "code_fingerprint": "95554b7db3c87feb4f5157b00cfb60857bb5da80bac448631f991933a1c48f42",
+      "code_fingerprint": "64c38af08f220e3f96f0c690458a8b41f96cfa31c0f924d7c5a57a43dfcaad74",
       "label": "resourceFileDefinitions",
       "last": "2026-08-17T02:24:51.746746+00:00",
       "provenance": [
@@ -365,13 +370,13 @@
           "q": "remove the excess excel visualizations in the whole codebase please analyze it"
         }
       ],
-      "score": 0.997160001,
+      "score": 0.615300235,
       "source_file": "src/contracts/resource.ts",
       "status": "tentative",
       "uses": 1
     },
     "src_contracts_resource_resourcefilenameschema": {
-      "code_fingerprint": "95554b7db3c87feb4f5157b00cfb60857bb5da80bac448631f991933a1c48f42",
+      "code_fingerprint": "64c38af08f220e3f96f0c690458a8b41f96cfa31c0f924d7c5a57a43dfcaad74",
       "label": "resourceFilenameSchema",
       "last": "2026-08-17T03:21:39.630455+00:00",
       "provenance": [
@@ -381,7 +386,23 @@
           "q": "look at the choose file button it's not consistent to others"
         }
       ],
-      "score": 0.998069156,
+      "score": 0.615861232,
+      "source_file": "src/contracts/resource.ts",
+      "status": "tentative",
+      "uses": 1
+    },
+    "src_contracts_resource_resourcefiletype": {
+      "code_fingerprint": "64c38af08f220e3f96f0c690458a8b41f96cfa31c0f924d7c5a57a43dfcaad74",
+      "label": "ResourceFileType",
+      "last": "2026-08-17T05:28:40.501140+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-17T05:28:40.501140+00:00",
+          "outcome": "useful",
+          "q": "in the admin/resources please fix this names it should be one line."
+        }
+      ],
+      "score": 0.61711761,
       "source_file": "src/contracts/resource.ts",
       "status": "tentative",
       "uses": 1
@@ -402,13 +423,13 @@
           "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
         }
       ],
-      "score": 1.993595003,
+      "score": 1.230153108,
       "source_file": "src/layouts/PublicLayout.tsx",
       "status": "preferred",
       "uses": 2
     },
     "src_pages_homepage_homepage": {
-      "code_fingerprint": "320237e6a380c3a0427a989b14dc082e496be0a97a658b9db1cc1141d2e313ad",
+      "code_fingerprint": "78f48fb34475fa4c37ed78d028a1e86418732abb0ee2124ef3345077b266383c",
       "label": "HomePage()",
       "last": "2026-08-17T01:58:12.910676+00:00",
       "provenance": [
@@ -418,7 +439,7 @@
           "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
         }
       ],
-      "score": 0.996733749,
+      "score": 0.615037215,
       "source_file": "src/pages/HomePage.tsx",
       "status": "tentative",
       "uses": 1
@@ -434,13 +455,13 @@
           "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
         }
       ],
-      "score": 0.996733749,
+      "score": 0.615037215,
       "source_file": "src/pages/RepositoryPage.tsx",
       "status": "tentative",
       "uses": 1
     },
     "src_routes_approuter_approuter": {
-      "code_fingerprint": "1eb93acf3d5d83213822e7022b9a4c5ed9dacb619b158ea2c16d30234e641634",
+      "code_fingerprint": "daca7e25aafd59ab9d0851a52119176413ec051cc562fc3e2100e51d70547e22",
       "label": "AppRouter()",
       "last": "2026-08-17T01:58:12.910676+00:00",
       "provenance": [
@@ -450,7 +471,7 @@
           "q": "Analyze the whole codebase and change the whole UI to a soft aesthetic with Poppins and color-preserving modals."
         }
       ],
-      "score": 0.996733749,
+      "score": 0.615037215,
       "source_file": "src/routes/AppRouter.tsx",
       "status": "tentative",
       "uses": 1

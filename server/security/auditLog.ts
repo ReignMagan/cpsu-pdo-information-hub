@@ -11,6 +11,7 @@ export const auditActions = [
   'resource.deleted',
   'resource.accessed',
   'structure.changed',
+  'accomplishment-resource.saved',
   'administrator.created',
   'administrator.updated',
   'administrator.deleted',

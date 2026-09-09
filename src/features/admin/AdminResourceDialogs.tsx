@@ -33,7 +33,7 @@ export function AdminResourcePreviewDialog({
   return (
     <AppDialog
       title={target.resource.filename}
-      description="Only signed-in staff can open this temporary preview."
+      description="Temporary staff preview."
       size="wide"
       onClose={onClose}
     >
@@ -59,7 +59,7 @@ export function AdminResourcePreviewDialog({
             onClick={onClose}
             className="min-h-11 cursor-pointer border border-strong-border px-5 font-semibold"
           >
-            Close preview
+            Close
           </button>
         </div>
       </div>
@@ -81,8 +81,8 @@ export function AdminResourceRenameDialog({
 }) {
   return (
     <AppDialog
-      title="Rename resource"
-      description="Enter the complete file name. Keep the file type at the end unchanged."
+      title="Rename"
+      description="Keep the file extension unchanged."
       onClose={onClose}
     >
       <form
@@ -148,10 +148,7 @@ export function AdminResourceDeleteDialog({
       onClose={onClose}
     >
       <div className="p-5 sm:p-6">
-        <p className="text-sm leading-6 text-muted-foreground">
-          Are you sure you want to delete this file?
-        </p>
-        <p className="mt-3 break-all border-l-2 border-danger bg-danger-soft px-4 py-3 text-sm font-semibold text-foreground">
+        <p className="break-all border-l-2 border-danger bg-danger-soft px-4 py-3 text-sm font-semibold text-foreground">
           {target.filename}
         </p>
         {error ? (
@@ -173,7 +170,7 @@ export function AdminResourceDeleteDialog({
             disabled={isPending}
             className="min-h-11 cursor-pointer bg-danger px-5 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isPending ? "Deleting..." : "Delete permanently"}
+            {isPending ? "Deleting..." : "Delete file"}
           </button>
         </div>
       </div>

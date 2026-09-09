@@ -58,7 +58,7 @@ export function RepositoryToolbar({
     <div className="mt-6 rounded-2xl border border-border bg-surface px-4 py-5 shadow-[0_12px_32px_rgba(20,83,45,0.06)] sm:px-5">
       <div className="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-12 lg:items-end">
         <label className="col-span-2 block lg:col-span-5">
-          <span className="text-sm font-semibold">Search repository</span>
+          <span className="text-sm font-semibold">Search</span>
           <span className="relative mt-2 block">
             <Search
               className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -70,7 +70,7 @@ export function RepositoryToolbar({
               onChange={(event) =>
                 onChange({ fileType, query: event.target.value, section, sort })
               }
-              placeholder="Search files or categories"
+              placeholder="File or category"
               className="min-h-12 w-full rounded-xl border border-strong-border bg-surface py-3 pl-11 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/15"
             />
           </span>
@@ -100,7 +100,7 @@ export function RepositoryToolbar({
         </label>
 
         <label className="block lg:col-span-2">
-          <span className="text-sm font-semibold">File type</span>
+          <span className="text-sm font-semibold">Type</span>
           <select
             value={fileType}
             onChange={(event) =>
@@ -122,7 +122,7 @@ export function RepositoryToolbar({
         </label>
 
         <label className="block lg:col-span-2">
-          <span className="text-sm font-semibold">Sort by</span>
+          <span className="text-sm font-semibold">Sort</span>
           <select
             value={sort}
             onChange={(event) =>

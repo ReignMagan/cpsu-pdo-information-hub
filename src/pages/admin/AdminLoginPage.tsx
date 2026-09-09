@@ -59,7 +59,7 @@ export function AdminLoginPage() {
           className="inline-flex items-center gap-2 border-b border-primary pb-1 text-sm font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
-          Return to public site
+          Public site
         </Link>
         <div className="mt-5 grid overflow-hidden rounded-3xl border border-border bg-surface shadow-[0_24px_70px_rgba(20,83,45,0.12)] sm:mt-6 lg:grid-cols-[0.82fr_1.18fr]">
           <section
@@ -80,10 +80,10 @@ export function AdminLoginPage() {
               id="login-context-title"
               className="mt-3 font-serif text-3xl leading-tight sm:mt-4 sm:text-5xl"
             >
-              Planning and Development Office
+              PDO Repository
             </h1>
             <p className="mt-3 max-w-md text-sm leading-6 text-primary-foreground/80 sm:mt-6 sm:text-base sm:leading-7">
-              A private workspace for staff who maintain the office repository.
+              Private workspace for authorized staff.
             </p>
           </section>
           <section
@@ -96,20 +96,17 @@ export function AdminLoginPage() {
                 id="login-form-title"
                 className="font-serif text-2xl tracking-tight sm:text-4xl"
               >
-                Staff Sign in
+                Staff sign in
               </h2>
             </div>
-            <p className="mt-4 leading-7 text-muted-foreground">
-            </p>
             {configurationError ? (
               <div
                 className="mt-7 rounded-xl border border-warning/20 bg-warning-soft px-4 py-3 text-sm leading-6 text-foreground"
                 role="status"
               >
-                <p className="font-semibold">Sign-in is temporarily unavailable</p>
+                <p className="font-semibold">Sign-in unavailable</p>
                 <p className="mt-1 text-muted-foreground">
-                  Please contact the person responsible for maintaining this
-                  website.
+                  Contact the site administrator.
                 </p>
               </div>
             ) : null}
@@ -204,7 +201,7 @@ export function AdminLoginPage() {
               </button>
             </form>
             <p className="mt-8 border-t border-border pt-5 text-sm leading-6 text-muted-foreground">
-              Need an account? Contact an existing administrator.
+              Accounts are managed by administrators.
             </p>
           </section>
         </div>
