@@ -9,7 +9,7 @@ import { isR2NotFound } from "./r2Errors.ts";
 
 const key = "_system/accomplishment-resource.json";
 const defaults: AccomplishmentResourceData = {
-  version: 1,
+  version: 2,
   nodes: [
     {
       id: "physical-performance",

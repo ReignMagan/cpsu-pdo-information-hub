@@ -8,6 +8,7 @@ import {
 import { handleAdminResourceAccessRequest } from "../http/adminResourceAccessHandler.ts";
 import { createDevRequest, writeDevResponse } from "./httpAdapter.ts";
 import { handleAccomplishmentResourceRequest } from "../http/accomplishmentResourceHandler.ts";
+import { handlePublicAccomplishmentResourceRequest } from "../http/publicAccomplishmentResourceHandler.ts";
 export function adminOperationsApiPlugin(
   environment: NodeJS.ProcessEnv,
 ): Plugin {
@@ -43,6 +44,14 @@ export function adminOperationsApiPlugin(
         }
         if (path === "/api/admin/accomplishment-resource") {
           const apiResponse = await handleAccomplishmentResourceRequest(
+            await createDevRequest(request),
+            environment,
+          );
+          await writeDevResponse(response, apiResponse);
+          return;
+        }
+        if (path === "/api/accomplishments") {
+          const apiResponse = await handlePublicAccomplishmentResourceRequest(
             await createDevRequest(request),
             environment,
           );

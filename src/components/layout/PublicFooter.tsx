@@ -20,6 +20,9 @@ export function PublicFooter() {
           <NavLink className="hover:underline" to="/repository">
             Repository
           </NavLink>
+          <NavLink className="hover:underline" to="/accomplishments">
+            Accomplishments
+          </NavLink>
           <NavLink className="hover:underline" to="/about">
             About
           </NavLink>

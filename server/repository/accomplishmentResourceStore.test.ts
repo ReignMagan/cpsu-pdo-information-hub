@@ -4,7 +4,7 @@ import { accomplishmentResourceDataSchema } from "../../src/contracts/accomplish
 import { createAccomplishmentResourceWriteCommand } from "./accomplishmentResourceStore.ts";
 
 const data = {
-  version: 1 as const,
+  version: 2 as const,
   nodes: [
     {
       id: "physical-performance",

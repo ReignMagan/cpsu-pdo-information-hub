@@ -3,6 +3,7 @@ import {
   accomplishmentResourceResponseSchema,
   type AccomplishmentResourceData,
 } from "../contracts/accomplishmentResource";
+import { parseApiError, readJsonResponse } from "./apiResponse";
 
 async function request(
   user: User,
@@ -39,4 +40,26 @@ export function saveAccomplishmentResource(
   data: AccomplishmentResourceData,
 ) {
   return request(user, { method: "PUT", body: JSON.stringify(data) });
+}
+
+export async function getPublicAccomplishmentResource(
+  year: number,
+  signal?: AbortSignal,
+) {
+  const response = await fetch(`/api/accomplishments?year=${year}`, {
+    cache: "no-store",
+    headers: { accept: "application/json" },
+    signal,
+  });
+  const payload = await readJsonResponse(response);
+
+  if (!response.ok) {
+    const error = parseApiError(
+      payload,
+      "The accomplishment data could not be loaded.",
+    );
+    throw new Error(error.message);
+  }
+
+  return accomplishmentResourceResponseSchema.parse(payload).data;
 }

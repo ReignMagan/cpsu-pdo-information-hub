@@ -1,6 +1,7 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { User } from "firebase/auth";
 import {
+  ArrowLeftRight,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
@@ -12,6 +13,7 @@ import {
 import { Fragment, useState } from "react";
 import { AppDialog } from "../../components/ui/AppDialog";
 import type { AccomplishmentResourceData } from "../../contracts/accomplishmentResource";
+import { ChartColorLegend } from "../../features/accomplishments/AccomplishmentChart";
 import { useAuth } from "../../features/auth/useAuth";
 import {
   getAccomplishmentResource,
@@ -25,11 +27,13 @@ type TreeNode = {
   type: NodeType;
   title: string;
 };
-type EntryField = "target" | "q1" | "q2" | "q3" | "q4" | "total";
 type DataRowType = "results" | "rawData";
-type YearEntry = Record<EntryField, string>;
-type IndicatorEntry = Record<DataRowType, YearEntry>;
-type EntriesByYear = Record<number, Record<string, IndicatorEntry>>;
+type ValueType = "target" | "accomplishment";
+type PeriodField = "q1" | "q2" | "q3" | "q4" | "total";
+type PeriodEntry = Record<PeriodField, string>;
+type DataRowEntry = Record<ValueType, PeriodEntry>;
+type IndicatorEntry = Record<DataRowType, DataRowEntry>;
+type EntriesByYear = Record<string, Record<string, IndicatorEntry>>;
 type EditorState = {
   mode: "add" | "edit";
   type: NodeType;
@@ -38,22 +42,52 @@ type EditorState = {
   value: string;
 };
 
-const resultFields = ["q1", "q2", "q3", "q4", "total"] as const;
+const periodFields = [
+  { id: "q1", label: "Q1" },
+  { id: "q2", label: "Q2" },
+  { id: "q3", label: "Q3" },
+  { id: "q4", label: "Q4" },
+  { id: "total", label: "Total" },
+] as const;
 const dataRows = [
   { id: "results", label: "Percentage" },
   { id: "rawData", label: "Raw Data" },
 ] as const;
+const valueGroups = [
+  {
+    id: "target",
+    label: "Target",
+    headerClass: "bg-surface-secondary text-foreground",
+    quarterClass: "bg-surface-secondary/80 text-muted-foreground",
+    cellClass: "bg-surface-secondary/45",
+    totalClass: "bg-surface-secondary",
+    inputClass: "bg-surface",
+  },
+  {
+    id: "accomplishment",
+    label: "Accomplishment",
+    headerClass: "bg-primary-soft text-primary",
+    quarterClass: "bg-primary-soft/65 text-primary",
+    cellClass: "bg-surface",
+    totalClass: "bg-primary-soft/55",
+    inputClass: "bg-surface",
+  },
+] as const;
 const fieldClass =
-  "min-h-9 w-full border border-strong-border bg-surface px-2 py-1 text-xs outline-none placeholder:text-xs placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20";
+  "min-h-10 w-full border border-strong-border px-2 py-1 text-center text-sm font-medium tabular-nums outline-none placeholder:text-xs placeholder:font-normal placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20";
 const actionClass =
   "inline-flex min-h-9 cursor-pointer items-center gap-1 px-2 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
-function emptyEntry(): YearEntry {
-  return { target: "", q1: "", q2: "", q3: "", q4: "", total: "" };
+function emptyPeriodEntry(): PeriodEntry {
+  return { q1: "", q2: "", q3: "", q4: "", total: "" };
+}
+
+function emptyDataRowEntry(): DataRowEntry {
+  return { target: emptyPeriodEntry(), accomplishment: emptyPeriodEntry() };
 }
 
 function emptyIndicatorEntry(): IndicatorEntry {
-  return { results: emptyEntry(), rawData: emptyEntry() };
+  return { results: emptyDataRowEntry(), rawData: emptyDataRowEntry() };
 }
 
 function nodeName(type: NodeType) {
@@ -156,6 +190,7 @@ function AccomplishmentResourceEditor({
   user: User;
   initialData: AccomplishmentResourceData;
 }) {
+  const queryClient = useQueryClient();
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 6 }, (_, index) => currentYear - index);
   const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -169,13 +204,19 @@ function AccomplishmentResourceEditor({
   const saveMutation = useMutation({
     mutationFn: () => {
       return saveAccomplishmentResource(user, {
-        version: 1,
+        version: 2,
         nodes,
         entries,
         chartType,
       });
     },
-    onSuccess: () => setSaveStatus("saved"),
+    onSuccess: (savedData) => {
+      queryClient.setQueryData(["admin-accomplishment-resource"], savedData);
+      void queryClient.invalidateQueries({
+        queryKey: ["public-accomplishment-resource"],
+      });
+      setSaveStatus("saved");
+    },
   });
 
   const childrenOf = (parentId: string | null) =>
@@ -251,7 +292,8 @@ function AccomplishmentResourceEditor({
   function updateEntry(
     id: string,
     rowType: DataRowType,
-    field: EntryField,
+    valueType: ValueType,
+    field: PeriodField,
     value: string,
   ) {
     setEntries((allEntries) => ({
@@ -261,8 +303,13 @@ function AccomplishmentResourceEditor({
         [id]: {
           ...(allEntries[selectedYear]?.[id] ?? emptyIndicatorEntry()),
           [rowType]: {
-            ...(allEntries[selectedYear]?.[id]?.[rowType] ?? emptyEntry()),
-            [field]: value,
+            ...(allEntries[selectedYear]?.[id]?.[rowType] ??
+              emptyDataRowEntry()),
+            [valueType]: {
+              ...(allEntries[selectedYear]?.[id]?.[rowType]?.[valueType] ??
+                emptyPeriodEntry()),
+              [field]: value,
+            },
           },
         },
       },
@@ -359,48 +406,74 @@ function AccomplishmentResourceEditor({
       ) : null}
 
       <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_10px_28px_rgba(20,83,45,0.05)]">
+        <div
+          id="quarterly-table-help"
+          className="flex items-center gap-2 border-b border-border bg-surface-secondary px-4 py-3 text-xs font-medium text-muted-foreground lg:hidden"
+        >
+          <ArrowLeftRight
+            className="size-4 shrink-0 text-primary"
+            aria-hidden="true"
+          />
+          Scroll to view all quarters
+        </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[64rem] table-fixed border-collapse text-left">
+          <table
+            aria-describedby="quarterly-table-help"
+            className="w-full min-w-[90rem] table-fixed border-collapse text-left"
+          >
+            <colgroup>
+              <col className="w-[22rem]" />
+              <col className="w-32" />
+              {Array.from({ length: 10 }, (_, index) => (
+                <col key={index} className="w-24" />
+              ))}
+            </colgroup>
             <thead className="bg-surface-secondary text-sm">
               <tr className="border-b border-strong-border">
-                <th rowSpan={2} className="w-[36%] px-5 py-4">
+                <th
+                  scope="col"
+                  rowSpan={2}
+                  className="bg-surface-secondary px-5 py-4 lg:sticky lg:left-0 lg:z-30 lg:shadow-[1px_0_0_var(--strong-border)]"
+                >
                   Performance area
                 </th>
                 <th
+                  scope="col"
                   rowSpan={2}
-                  className="w-[9%] border-l border-strong-border px-4 py-4"
+                  className="border-l border-strong-border bg-surface-secondary px-4 py-4 lg:sticky lg:left-[22rem] lg:z-30 lg:shadow-[1px_0_0_var(--strong-border)]"
                 >
                   Data type
                 </th>
-                <th
-                  rowSpan={2}
-                  className="w-[10%] border-l border-strong-border px-4 py-4"
-                >
-                  Target
-                </th>
-                <th
-                  colSpan={5}
-                  className="border-l border-strong-border px-5 py-3 text-center"
-                >
-                  Accomplishment
-                </th>
-              </tr>
-              <tr className="border-b border-strong-border">
-                {["Q1", "Q2", "Q3", "Q4", "Total"].map((label) => (
+                {valueGroups.map((group, index) => (
                   <th
-                    key={label}
-                    className="w-[9%] border-l border-border px-3 py-3 text-center text-xs uppercase tracking-[0.1em] text-muted-foreground"
+                    key={group.id}
+                    scope="colgroup"
+                    colSpan={5}
+                    className={`${index === 1 ? "border-l-2 border-primary/35" : "border-l border-strong-border"} ${group.headerClass} px-5 py-3 text-center`}
                   >
-                    {label}
+                    <span className="font-semibold">{group.label}</span>
                   </th>
                 ))}
+              </tr>
+              <tr className="border-b border-strong-border">
+                {valueGroups.flatMap((group, groupIndex) =>
+                  periodFields.map((field) => (
+                    <th
+                      key={`${group.id}-${field.id}`}
+                      scope="col"
+                      className={`${groupIndex === 1 && field.id === "q1" ? "border-l-2 border-primary/35" : "border-l border-border"} ${group.quarterClass} ${field.id === "total" ? group.totalClass : ""} px-3 py-3 text-center text-xs font-semibold uppercase tracking-[0.1em]`}
+                    >
+                      {field.label}
+                    </th>
+                  )),
+                )}
               </tr>
             </thead>
             <tbody>
               {childrenOf(null).map((section) => (
                 <Fragment key={section.id}>
-                  <tr className="border-b border-border">
-                    <th className="px-5 py-2">
+                  <tr className="border-b border-primary/15 bg-primary-soft">
+                    <th className="bg-primary-soft px-5 py-2 lg:sticky lg:left-0 lg:z-20">
                       <div className="flex items-center justify-between gap-3">
                         <button
                           type="button"
@@ -425,13 +498,13 @@ function AccomplishmentResourceEditor({
                         {renderActions(section)}
                       </div>
                     </th>
-                    <td colSpan={7} />
+                    <td colSpan={11} className="bg-primary-soft" />
                   </tr>
                   {isOpen(section.id)
                     ? childrenOf(section.id).map((group) => (
                         <Fragment key={group.id}>
-                          <tr className="border-b border-border">
-                            <th className="py-2 pl-12 pr-5">
+                          <tr className="border-b border-border bg-surface-secondary/80">
+                            <th className="bg-surface-secondary py-2 pl-12 pr-5 lg:sticky lg:left-0 lg:z-20">
                               <div className="flex items-center justify-between gap-3">
                                 <button
                                   type="button"
@@ -456,7 +529,7 @@ function AccomplishmentResourceEditor({
                                 {renderActions(group)}
                               </div>
                             </th>
-                            <td colSpan={7} />
+                            <td colSpan={11} className="bg-surface-secondary/80" />
                           </tr>
                           {isOpen(group.id)
                             ? childrenOf(group.id).map((indicator) => {
@@ -473,14 +546,15 @@ function AccomplishmentResourceEditor({
                                           key={dataRow.id}
                                           className={
                                             rowIndex === 0
-                                              ? "border-b border-border"
-                                              : ""
+                                              ? "border-t border-strong-border"
+                                              : "border-t border-border"
                                           }
                                         >
                                           {rowIndex === 0 ? (
                                             <th
+                                              scope="rowgroup"
                                               rowSpan={2}
-                                              className="py-4 pl-20 pr-5 text-sm font-medium"
+                                              className="bg-surface py-4 pl-16 pr-4 text-sm font-semibold lg:sticky lg:left-0 lg:z-10 lg:shadow-[1px_0_0_var(--strong-border)]"
                                             >
                                               <div className="flex items-center justify-between gap-3">
                                                 <span className="whitespace-normal break-words">
@@ -490,48 +564,47 @@ function AccomplishmentResourceEditor({
                                               </div>
                                             </th>
                                           ) : null}
-                                          <th className="border-l border-strong-border px-4 py-3 text-sm font-medium">
+                                          <th
+                                            scope="row"
+                                            className={`${dataRow.id === "results" ? "bg-primary-soft text-primary" : "bg-surface-secondary text-foreground"} border-l border-strong-border px-4 py-3 text-sm font-semibold lg:sticky lg:left-[22rem] lg:z-10 lg:shadow-[1px_0_0_var(--strong-border)]`}
+                                            style={
+                                              dataRow.id === "results"
+                                                ? {
+                                                    backgroundColor:
+                                                      "var(--primary-soft)",
+                                                  }
+                                                : undefined
+                                            }
+                                          >
                                             {dataRow.label}
                                           </th>
-                                          <td className="border-l border-strong-border p-3">
-                                            <input
-                                              aria-label={`${dataRow.label} target for ${indicator.title}`}
-                                              value={entry.target}
-                                              onChange={(event) =>
-                                                updateEntry(
-                                                  indicator.id,
-                                                  dataRow.id,
-                                                  "target",
-                                                  event.target.value,
-                                                )
-                                              }
-                                              placeholder="Enter"
-                                              className={fieldClass}
-                                            />
-                                          </td>
-                                          {resultFields.map((field) => (
-                                            <td
-                                              key={field}
-                                              className="border-l border-border p-3"
-                                            >
-                                              <input
-                                                aria-label={`${dataRow.label} ${field} accomplishment for ${indicator.title}`}
-                                                value={entry[field]}
-                                                onChange={(event) =>
-                                                  updateEntry(
-                                                    indicator.id,
-                                                    dataRow.id,
-                                                    field,
-                                                    event.target.value,
-                                                  )
-                                                }
-                                                placeholder="Enter"
-                                                className={
-                                                  fieldClass + " text-center"
-                                                }
-                                              />
-                                            </td>
-                                          ))}
+                                          {valueGroups.flatMap(
+                                            (group, groupIndex) =>
+                                              periodFields.map((field) => (
+                                                <td
+                                                  key={`${group.id}-${field.id}`}
+                                                  className={`${groupIndex === 1 && field.id === "q1" ? "border-l-2 border-primary/35" : "border-l border-border"} ${field.id === "total" ? group.totalClass : group.cellClass} p-2.5`}
+                                                >
+                                                  <input
+                                                    aria-label={`${dataRow.label} ${field.label} ${group.label.toLowerCase()} for ${indicator.title}`}
+                                                    value={
+                                                      entry[group.id][field.id]
+                                                    }
+                                                    onChange={(event) =>
+                                                      updateEntry(
+                                                        indicator.id,
+                                                        dataRow.id,
+                                                        group.id,
+                                                        field.id,
+                                                        event.target.value,
+                                                      )
+                                                    }
+                                                    placeholder="Enter"
+                                                    className={`${fieldClass} ${group.inputClass} ${field.id === "total" ? "font-bold" : ""}`}
+                                                  />
+                                                </td>
+                                              )),
+                                          )}
                                         </tr>
                                       );
                                     })}
@@ -554,10 +627,16 @@ function AccomplishmentResourceEditor({
           </p>
         ) : null}
 
-        <div className="flex flex-col gap-3 border-t border-strong-border bg-surface-secondary px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-sm text-muted-foreground">
-            Targets and accomplishments use manual input.
-          </span>
+        <div className="flex flex-col gap-4 border-t border-strong-border bg-surface-secondary px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold">Public chart colors</p>
+            <div className="mt-2">
+              <ChartColorLegend compact />
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Accomplishment colors compare each value with its matching target.
+            </p>
+          </div>
           <label className="flex items-center gap-2">
             <span className="text-sm font-semibold">Chart</span>
             <select
